@@ -17,10 +17,13 @@ public class UMUClient {
 	public static final Logger LOGGER = LogManager.getLogger();
 	public static final Marker MARKER = MarkerManager.getMarker("UMU_CLIENT");
 
+	public static IClientHandler CLIENT_HANDLER = new IClientHandler.DummyClientHandler();
+
 	public UMUClient() {
 		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 		IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> new ClientHandler(forgeBus, modBus)::initialize);
+		CLIENT_HANDLER = new IClientHandler.ClientHandler(forgeBus, modBus);
+		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> CLIENT_HANDLER::initialize);
 	}
 }
