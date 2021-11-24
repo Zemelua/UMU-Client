@@ -46,4 +46,8 @@ public class VanillaRangeOption implements IOption<Double> {
 	public void reset() {
 
 	}
+
+	@Override
+	public void save() {
+	}
 }

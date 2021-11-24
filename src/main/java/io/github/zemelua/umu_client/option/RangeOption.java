@@ -41,4 +41,9 @@ public class RangeOption implements IOption<Integer> {
 	public void reset() {
 
 	}
+
+	@Override
+	public void save() {
+
+	}
 }

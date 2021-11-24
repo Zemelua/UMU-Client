@@ -4,16 +4,19 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.zemelua.umu_client.gui.screen.widget.OptionWidget;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
 public class SwitchOption implements IOption<Boolean> {
+	private final ConfigValue<Boolean> cache;
 	private final boolean defaultValue;
 	private final Component name;
 	private final Component description;
 
 	private boolean value;
 
-	public SwitchOption(boolean defaultValue, Component name, Component description) {
-		this.defaultValue = defaultValue;
+	public SwitchOption(ConfigValue<Boolean> cache, Component name, Component description) {
+		this.cache = cache;
+		this.defaultValue = this.cache.get();
 		this.name = name;
 		this.description = description;
 
@@ -48,6 +51,11 @@ public class SwitchOption implements IOption<Boolean> {
 	@Override
 	public OptionWidget<SwitchOption> createWidget(int startX, int startY) {
 		return new Widget(new Rect2i(startX, startY, 200, 18), this);
+	}
+
+	@Override
+	public void save() {
+		this.cache.set(this.value);
 	}
 
 	private static class Widget extends OptionWidget<SwitchOption> {

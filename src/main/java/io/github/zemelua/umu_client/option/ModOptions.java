@@ -1,9 +1,10 @@
 package io.github.zemelua.umu_client.option;
 
+import io.github.zemelua.umu_client.UMUClient;
 import net.minecraft.network.chat.TextComponent;
 
 public final class ModOptions {
 	public static final IOption<Boolean> DYNAMIC_LIGHT = new SwitchOption(
-			true, new TextComponent("dynamiclight"), new TextComponent("des")
+			UMUClient.CONFIG_CLIENT.getEnableDynamicLight(), new TextComponent("dynamiclight"), new TextComponent("des")
 	);
 }

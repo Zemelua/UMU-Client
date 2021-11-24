@@ -55,4 +55,9 @@ public class VanillaSwitchOption implements IOption<Boolean> {
 	public void reset() {
 
 	}
+
+	@Override
+	public void save() {
+
+	}
 }

@@ -15,4 +15,6 @@ public interface IOption<T> {
 	Component getDescription();
 
 	OptionWidget<? extends IOption<T>> createWidget(int startX, int startY);
+
+	void save();
 }
