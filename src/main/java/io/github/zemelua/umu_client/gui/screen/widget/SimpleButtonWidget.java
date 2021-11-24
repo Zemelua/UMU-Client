@@ -1,9 +1,8 @@
 package io.github.zemelua.umu_client.gui.screen.widget;
 
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 
 public class SimpleButtonWidget extends BaseWidget {
 	protected final Runnable onPressed;
@@ -28,7 +27,8 @@ public class SimpleButtonWidget extends BaseWidget {
 		return false;
 	}
 
-	protected void playClickSound() {
-		this.speaker.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+	@Override
+	public void updateNarration(NarrationElementOutput p_169152_) {
+
 	}
 }

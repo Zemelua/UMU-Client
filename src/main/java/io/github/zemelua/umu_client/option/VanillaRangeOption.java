@@ -1,5 +1,6 @@
 package io.github.zemelua.umu_client.option;
 
+import io.github.zemelua.umu_client.gui.screen.widget.OptionWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.ProgressOption;
@@ -24,6 +25,11 @@ public class VanillaRangeOption implements IOption<Double> {
 	@Override
 	public Component getDescription() {
 		return this.description;
+	}
+
+	@Override
+	public OptionWidget<IOption<Double>> createWidget(int startX, int startY) {
+		return null;
 	}
 
 	@Override

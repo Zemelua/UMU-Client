@@ -1,5 +1,7 @@
 package io.github.zemelua.umu_client;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -25,5 +27,9 @@ public class UMUClient {
 
 		CLIENT_HANDLER = new IClientHandler.ClientHandler(forgeBus, modBus);
 		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> CLIENT_HANDLER::initialize);
+	}
+
+	public static Component component(String name) {
+		return new TranslatableComponent(MOD_ID + "." + name);
 	}
 }

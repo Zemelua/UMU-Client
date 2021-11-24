@@ -9,10 +9,12 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 
-public class BaseWidget implements Widget, NarratableEntry, GuiEventListener {
+public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventListener {
 	protected final Rect2i rect;
 	protected final Component label;
 	protected final Font font;
@@ -28,6 +30,9 @@ public class BaseWidget implements Widget, NarratableEntry, GuiEventListener {
 		Minecraft minecraft = Minecraft.getInstance();
 		this.font = minecraft.font;
 		this.speaker = minecraft.getSoundManager();
+
+		this.enabled = true;
+		this.hovered = false;
 	}
 
 	@Override
@@ -43,7 +48,7 @@ public class BaseWidget implements Widget, NarratableEntry, GuiEventListener {
 		int limitX = this.rect.getX() + this.rect.getWidth();
 		int limitY = this.rect.getY() + this.rect.getHeight();
 
-		GuiComponent.fill(matrixStack, this.rect.getX(), limitX, limitY, this.rect.getHeight(), backGroundColor);
+		this.drawRect(matrixStack, this.rect.getX(), this.rect.getY(), limitX, limitY, backGroundColor);
 	}
 
 	protected void drawLabel(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
@@ -51,7 +56,7 @@ public class BaseWidget implements Widget, NarratableEntry, GuiEventListener {
 		int centerX = this.rect.getX() + (this.rect.getWidth() / 2);
 		int centerY = this.rect.getY() + (this.rect.getHeight() / 2);
 
-		GuiComponent.drawCenteredString(matrixStack, this.font, this.label, centerX, centerY, labelColor);
+		this.drawTextCenter(matrixStack, this.label, centerX, centerY, labelColor);
 	}
 
 	@Override
@@ -63,7 +68,26 @@ public class BaseWidget implements Widget, NarratableEntry, GuiEventListener {
 	public void updateNarration(NarrationElementOutput p_169152_) {
 	}
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	protected void drawRect(PoseStack matrixStack, int startX, int startY, int endX, int endY, int color) {
+		GuiComponent.fill(matrixStack, startX, startY, endX, endY, color);
+	}
+
+	protected void drawRectOutline(PoseStack matrixStack, int startX, int startY, int endX, int endY, int color) {
+		this.drawRect(matrixStack, startX, startY, endX, startY + 1, color);
+		this.drawRect(matrixStack, startX, endY - 1, endX, endY, color);
+		this.drawRect(matrixStack, startX, startY, startX + 1, endY, color);
+		this.drawRect(matrixStack, endX - 1, startY, endX, endY, color);
+	}
+
+	protected void drawText(PoseStack matrixStack, Component text, int drawX, int drawY, int color) {
+		font.draw(matrixStack, text, drawX, drawY, color);
+	}
+
+	protected void drawTextCenter(PoseStack matrixStack, Component text, int drawX, int drawY, int color) {
+		this.drawText(matrixStack, text, drawX - this.font.width(text.getVisualOrderText()) / 2, drawY, color);
+	}
+
+	protected void playClickSound() {
+		this.speaker.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 	}
 }

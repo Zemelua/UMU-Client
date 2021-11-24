@@ -1,5 +1,6 @@
 package io.github.zemelua.umu_client.option;
 
+import io.github.zemelua.umu_client.gui.screen.widget.OptionWidget;
 import net.minecraft.network.chat.Component;
 
 public class RangeOption implements IOption<Integer> {
@@ -19,6 +20,11 @@ public class RangeOption implements IOption<Integer> {
 	@Override
 	public Component getDescription() {
 		return this.description;
+	}
+
+	@Override
+	public OptionWidget<IOption<Integer>> createWidget(int startX, int startY) {
+		return null;
 	}
 
 	@Override

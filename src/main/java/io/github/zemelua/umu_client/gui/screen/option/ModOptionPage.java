@@ -16,4 +16,8 @@ public class ModOptionPage {
 	public Component getTitle() {
 		return this.title;
 	}
+
+	public ImmutableList<ImmutableList<IOption<?>>> getGroups() {
+		return optionGroups;
+	}
 }
