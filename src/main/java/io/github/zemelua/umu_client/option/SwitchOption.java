@@ -1,65 +1,26 @@
 package io.github.zemelua.umu_client.option;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import io.github.zemelua.umu_client.config.ClientConfig;
 import io.github.zemelua.umu_client.gui.screen.widget.OptionWidget;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
-public class SwitchOption implements IOption<Boolean> {
-	private final ConfigValue<Boolean> cache;
-	private final boolean defaultValue;
-	private final Component name;
-	private final Component description;
+import java.util.function.Function;
 
-	private boolean value;
-
-	public SwitchOption(ConfigValue<Boolean> cache, Component name, Component description) {
-		this.cache = cache;
-		this.defaultValue = this.cache.get();
-		this.name = name;
-		this.description = description;
-
-		this.reset();
+public class SwitchOption extends IOption.BaseOption<Boolean> {
+	public SwitchOption(Boolean defaultValue, Function<ClientConfig, ConfigValue<Boolean>> cache, Component name, Component description) {
+		super(defaultValue, cache, name, description);
 	}
 
 	@Override
-	public Boolean getValue() {
-		return this.value;
+	public OptionWidget<Boolean, IOption<Boolean>> createWidget(int startX, int startY, int sizeX, int sizeY) {
+		return new Widget(new Rect2i(startX, startY, sizeX, sizeY), this);
 	}
 
-	@Override
-	public void setValue(Boolean value) {
-		this.value = value;
-	}
-
-	@Override
-	public void reset() {
-		this.value = this.defaultValue;
-	}
-
-	@Override
-	public Component getName() {
-		return this.name;
-	}
-
-	@Override
-	public Component getDescription() {
-		return this.description;
-	}
-
-	@Override
-	public OptionWidget<SwitchOption> createWidget(int startX, int startY) {
-		return new Widget(new Rect2i(startX, startY, 200, 18), this);
-	}
-
-	@Override
-	public void save() {
-		this.cache.set(this.value);
-	}
-
-	private static class Widget extends OptionWidget<SwitchOption> {
-		public Widget(Rect2i rect, SwitchOption option) {
+	protected static class Widget extends OptionWidget<Boolean, IOption<Boolean>> {
+		public Widget(Rect2i rect, IOption<Boolean> option) {
 			super(rect, option);
 		}
 
@@ -75,6 +36,11 @@ public class SwitchOption implements IOption<Boolean> {
 			if (this.option.getValue()) {
 				this.drawRect(matrixStack, startX + 2, startY + 2, endX - 2, endY - 2, color);
 			}
+		}
+
+		@Override
+		protected int getValueWidth() {
+			return 30;
 		}
 
 		@Override

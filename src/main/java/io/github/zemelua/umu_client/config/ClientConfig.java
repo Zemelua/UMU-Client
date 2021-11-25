@@ -1,21 +1,29 @@
 package io.github.zemelua.umu_client.config;
 
+import io.github.zemelua.umu_client.option.ModOptions;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.*;
 
 public class ClientConfig {
 	private static final boolean ENABLE_DYNAMIC_LIGHT_DEFAULT = true;
 
-	private final ConfigValue<Boolean> enableDynamicLight;
+	private final BooleanValue dynamicLightEnable;
+	private final IntValue dynamicLightBrightness;
 
 	public ClientConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("video");
 
-		this.enableDynamicLight = builder.comment("Enable dynamic light")
-				.define("enable_dynamic_light", ENABLE_DYNAMIC_LIGHT_DEFAULT);
+		this.dynamicLightEnable = builder.comment(ModOptions.DYNAMIC_LIGHT.getDescription().getString())
+				.define(ModOptions.DYNAMIC_LIGHT.getName().getString(), ENABLE_DYNAMIC_LIGHT_DEFAULT);
+		this.dynamicLightBrightness = builder.comment(ModOptions.DYNAMIC_LIGHT_BRIGHTNESS.getDescription().getString())
+				.defineInRange(ModOptions.DYNAMIC_LIGHT_BRIGHTNESS.getName().getString(), 15, 1, 15);
 	}
 
-	public ConfigValue<Boolean> getEnableDynamicLight() {
-		return this.enableDynamicLight;
+	public BooleanValue getDynamicLightEnable() {
+		return this.dynamicLightEnable;
+	}
+
+	public IntValue getDynamicLightBrightness() {
+		return this.dynamicLightBrightness;
 	}
 }

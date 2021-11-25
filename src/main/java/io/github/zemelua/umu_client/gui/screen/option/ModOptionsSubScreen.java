@@ -89,11 +89,11 @@ public class ModOptionsSubScreen extends Screen {
 
 		for (ImmutableList<IOption<?>> group : this.pages.get(this.currentPage).getGroups()) {
 			for (IOption<?> option : group) {
-				OptionWidget<?> widget = option.createWidget(x, y);
+				OptionWidget<?, ? extends IOption<?>> widget = option.createWidget(x, y, this.width / 2 - 8, 20);
 
 				this.addRenderableWidget(widget);
 
-				y += 18;
+				y += 20;
 			}
 
 			y += 4;
@@ -115,7 +115,7 @@ public class ModOptionsSubScreen extends Screen {
 	}
 
 	private void undo() {
-		this.getAllOptions().forEach(IOption::reset);
+		this.getAllOptions().forEach(IOption::load);
 	}
 
 	private Stream<IOption<?>> getAllOptions() {

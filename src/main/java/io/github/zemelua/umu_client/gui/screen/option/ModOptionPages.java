@@ -10,6 +10,7 @@ public class ModOptionPages {
 			.add(new ModOptionPage(UMUClient.component("screen.options.page.video"), ImmutableList.<ImmutableList<IOption<?>>>builder()
 							.add(ImmutableList.<IOption<?>>builder()
 									.add(ModOptions.DYNAMIC_LIGHT)
+									.add(ModOptions.DYNAMIC_LIGHT_BRIGHTNESS)
 									.build()
 							).build()
 					)

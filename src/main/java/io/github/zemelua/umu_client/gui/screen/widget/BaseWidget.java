@@ -23,6 +23,9 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 	protected boolean enabled;
 	protected boolean hovered;
 
+	protected double touchedTick;
+	protected double leftTick;
+
 	public BaseWidget(Rect2i rect, Component label) {
 		this.rect = rect;
 		this.label = label;
@@ -39,12 +42,20 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		this.hovered = this.rect.contains(mouseX, mouseY);
 
+		if (this.hovered) {
+			this.touchedTick += partialTicks;
+			this.leftTick = 0.0D;
+		} else {
+			this.leftTick += partialTicks;
+			this.touchedTick = 0.0D;
+		}
+
 		this.drawBackGround(matrixStack, mouseX, mouseY, partialTicks);
 		this.drawLabel(matrixStack, mouseX, mouseY, partialTicks);
 	}
 
 	protected void drawBackGround(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		int backGroundColor = this.enabled ? (hovered ? 0xE0000000 : 0x90000000) : 0x60000000;
+		int backGroundColor = this.enabled ? (hovered ? 0xE0000000 : 0x80000000) : 0x60000000;
 		int limitX = this.rect.getX() + this.rect.getWidth();
 		int limitY = this.rect.getY() + this.rect.getHeight();
 
@@ -80,7 +91,11 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 	}
 
 	protected void drawText(PoseStack matrixStack, Component text, int drawX, int drawY, int color) {
-		font.draw(matrixStack, text, drawX, drawY, color);
+		this.font.draw(matrixStack, text, drawX, drawY, color);
+	}
+
+	protected void drawText(PoseStack matrixStack, String text, int drawX, int drawY, int color) {
+		this.font.draw(matrixStack, text, drawX, drawY, color);
 	}
 
 	protected void drawTextCenter(PoseStack matrixStack, Component text, int drawX, int drawY, int color) {
