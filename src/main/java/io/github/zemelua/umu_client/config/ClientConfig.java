@@ -9,6 +9,7 @@ public class ClientConfig {
 
 	private final BooleanValue dynamicLightEnable;
 	private final IntValue dynamicLightBrightness;
+	private final IntValue themeColor;
 
 	public ClientConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("video");
@@ -17,6 +18,8 @@ public class ClientConfig {
 				.define(ModOptions.DYNAMIC_LIGHT.getName().getString(), ENABLE_DYNAMIC_LIGHT_DEFAULT);
 		this.dynamicLightBrightness = builder.comment(ModOptions.DYNAMIC_LIGHT_BRIGHTNESS.getDescription().getString())
 				.defineInRange(ModOptions.DYNAMIC_LIGHT_BRIGHTNESS.getName().getString(), 15, 1, 15);
+		this.themeColor = builder.comment("")
+				.defineInRange("theme_color", 46 / 255, 0, 255);
 	}
 
 	public BooleanValue getDynamicLightEnable() {
@@ -25,5 +28,9 @@ public class ClientConfig {
 
 	public IntValue getDynamicLightBrightness() {
 		return this.dynamicLightBrightness;
+	}
+
+	public IntValue getThemeColor() {
+		return this.themeColor;
 	}
 }

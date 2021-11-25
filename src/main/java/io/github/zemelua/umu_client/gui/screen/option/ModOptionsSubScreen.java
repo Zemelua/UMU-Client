@@ -108,6 +108,7 @@ public class ModOptionsSubScreen extends Screen {
 
 	private void setPage(int index) {
 		this.currentPage = index;
+		this.init();
 	}
 
 	private void apply() {

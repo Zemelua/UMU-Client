@@ -22,6 +22,7 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 
 	protected boolean enabled;
 	protected boolean hovered;
+	protected boolean hasHovered;
 
 	protected double touchedTick;
 	protected double leftTick;
@@ -45,6 +46,8 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 		if (this.hovered) {
 			this.touchedTick += partialTicks;
 			this.leftTick = 0.0D;
+
+			if (!this.hasHovered) this.hasHovered = true;
 		} else {
 			this.leftTick += partialTicks;
 			this.touchedTick = 0.0D;

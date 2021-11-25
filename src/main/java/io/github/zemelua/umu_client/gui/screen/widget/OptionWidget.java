@@ -20,7 +20,7 @@ public abstract class OptionWidget<T, O extends IOption<T>> extends BaseWidget {
 	@Override
 	protected void drawLabel(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		FormattedText label = this.label;
-		if (this.hovered && this.font.width(label) > (this.rect.getWidth() - this.getValueWidth())) {
+		if (this.font.width(label) > (this.rect.getWidth() - this.getValueWidth())) {
 			label = this.font.substrByWidth(label, this.rect.getWidth() - this.getValueWidth());
 			label = FormattedText.composite(label, FormattedText.of("..."));
 		}

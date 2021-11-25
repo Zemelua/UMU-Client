@@ -9,12 +9,12 @@ import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
 import java.util.function.Function;
 
-public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOption<Integer> {
-	private final Integer maxValue;
-	private final Integer minValue;
+public class RangeOption<T extends Number> extends IOption.BaseOption<T> implements IRangeOption<T> {
+	private final T maxValue;
+	private final T minValue;
 
-	public RangeOption(Integer defaultValue, Integer maxValue, Integer minValue,
-			Function<ClientConfig, ConfigValue<Integer>> cache, Component name, Component description) {
+	public RangeOption(T defaultValue, T maxValue, T minValue,
+					   Function<ClientConfig, ConfigValue<T>> cache, Component name, Component description) {
 		super(defaultValue, cache, name, description);
 
 		this.maxValue = maxValue;
@@ -22,24 +22,24 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 	}
 
 	@Override
-	public OptionWidget<Integer, IOption<Integer>> createWidget(int startX, int startY, int sizeX, int sizeY) {
-		return new Widget(new Rect2i(startX, startY, sizeX, sizeY), this);
+	public OptionWidget<T, ? extends IOption<T>> createWidget(int startX, int startY, int sizeX, int sizeY) {
+		return new Widget<>(new Rect2i(startX, startY, sizeX, sizeY), this);
 	}
 
 	@Override
-	public Integer getMax() {
+	public T getMax() {
 		return this.maxValue;
 	}
 
 	@Override
-	public Integer getMin() {
+	public T getMin() {
 		return this.minValue;
 	}
 
-	protected static class Widget extends OptionWidget<Integer, IOption<Integer>> {
+	protected static class Widget<T extends Number, O extends IOption<T> & IRangeOption<T>> extends OptionWidget<T, O> {
 		private double thumbPos;
 
-		public Widget(Rect2i rect, IOption<Integer> option) {
+		public Widget(Rect2i rect, O option) {
 			super(rect, option);
 
 			this.loadThumbPos();
@@ -47,10 +47,12 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 
 		@Override
 		protected void drawValue(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-			this.drawInt(matrixStack, mouseX, mouseY, partialTicks);
-			if (this.hovered) {
+			if (this.getSliderSize() > 0) {
 				this.drawSlider(matrixStack, mouseX, mouseY, partialTicks);
+				this.drawThumb(matrixStack, mouseX, mouseY, partialTicks);
 			}
+
+			this.drawCompact(matrixStack, mouseX, mouseY, partialTicks);
 		}
 
 		@Override
@@ -58,7 +60,7 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 			return this.getSliderSize() + 40;
 		}
 
-		private void drawInt(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+		protected void drawCompact(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 			String valueText = this.option.getValue().toString();
 			int drawX = this.rect.getX() + this.rect.getWidth() - 6 - this.font.width(valueText) - this.getSliderSize()
 					+ (this.hovered ? -4 : 0);
@@ -67,7 +69,7 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 			this.drawText(matrixStack, valueText, drawX, drawY, 0xFFFFFFFF);
 		}
 
-		private void drawSlider(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+		protected void drawSlider(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 			int startX = this.rect.getX() + this.rect.getWidth() - this.getSliderSize() - 6;
 			int startY = this.rect.getY() + this.rect.getHeight() / 2;
 			int endX = startX + this.getSliderSize();
@@ -75,28 +77,33 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 			int color = 0xFFFFFFFF;
 
 			this.drawRect(matrixStack, startX, startY, endX, endY, color);
+		}
 
+		protected void drawThumb(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 			this.loadThumbPos();
-			int thumbStartX = (int) (startX + this.thumbPos * this.getSliderSize());
-			int thumbStartY = startY - 5;
+
+			int thumbStartX = (int) (this.rect.getX() + this.rect.getWidth() - this.getSliderSize() - 6
+					+ this.thumbPos * this.getSliderSize());
+			int thumbStartY = this.rect.getY() + this.rect.getHeight() / 2 - 5;
 			int thumbEndX = thumbStartX + 2;
 			int thumbEndY = thumbStartY + 10;
+			int color = 0xFFFFFFFF;
 
 			this.drawRect(matrixStack, thumbStartX, thumbStartY, thumbEndX, thumbEndY, color);
 		}
 
 		private void loadThumbPos() {
-			if (this.option instanceof RangeOption optionRange) {
-				this.thumbPos = (double) (this.modifiedValue - optionRange.getMin())
-						/ (double) (optionRange.getMax() - optionRange.getMin());
-			}
+			this.thumbPos = (this.modifiedValue.doubleValue() - this.option.getMin().doubleValue())
+					/ (this.option.getMax().doubleValue() - this.option.getMin().doubleValue());
 		}
 
-		private int getSliderSize() {
+		protected int getSliderSize() {
+			if (!this.hasHovered) return 0;
+
 			if (this.hovered) {
 				return Math.min(90, (int) (this.touchedTick * 18));
 			} else {
-				return Math.max(0, (int) ((-this.leftTick + 5.0D) * 24));
+				return Math.min(90, Math.max(0, (int) ((-this.leftTick + 5.0D) * 24)));
 			}
 		}
 	}
