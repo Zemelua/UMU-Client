@@ -13,15 +13,23 @@ public interface IOption<T> {
 
 	void setValue(T value);
 
+	T getModifiedValue();
+
+	void setModifiedValue(T value);
+
 	Component getName();
 
 	Component getDescription();
 
 	OptionWidget<T, ? extends IOption<T>> createWidget(int startX, int startY, int sizeX, int sizeY);
 
-	void load();
+	default void load() {
+		this.setModifiedValue(this.getValue());
+	}
 
-	void save();
+	default void save() {
+		this.setValue(this.getModifiedValue());
+	}
 
 	abstract class BaseOption<T> implements IOption<T> {
 		private final T defaultValue;
@@ -29,7 +37,7 @@ public interface IOption<T> {
 		private final Component name;
 		private final Component description;
 
-		private T value;
+		private T modifiedValue;
 
 		public BaseOption(T defaultValue, Function<ClientConfig, ConfigValue<T>> cache, Component name, Component description) {
 			this.defaultValue = defaultValue;
@@ -37,17 +45,27 @@ public interface IOption<T> {
 			this.name = name;
 			this.description = description;
 
-			this.value = this.defaultValue;
+			this.modifiedValue = this.defaultValue;
 		}
 
 		@Override
 		public T getValue() {
-			return this.value;
+			return this.cache.apply(UMUClient.CONFIG_CLIENT).get();
 		}
 
 		@Override
 		public void setValue(T value) {
-			this.value = value;
+			this.cache.apply(UMUClient.CONFIG_CLIENT).set(value);
+		}
+
+		@Override
+		public T getModifiedValue() {
+			return this.modifiedValue;
+		}
+
+		@Override
+		public void setModifiedValue(T modifiedValue) {
+			this.modifiedValue = modifiedValue;
 		}
 
 		@Override
@@ -58,16 +76,6 @@ public interface IOption<T> {
 		@Override
 		public Component getDescription() {
 			return this.description;
-		}
-
-		@Override
-		public void load() {
-			this.value = this.cache.apply(UMUClient.CONFIG_CLIENT).get();
-		}
-
-		@Override
-		public void save() {
-			this.cache.apply(UMUClient.CONFIG_CLIENT).set(this.value);
 		}
 
 		public T getDefaultValue() {

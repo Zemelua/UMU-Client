@@ -7,14 +7,11 @@ import net.minecraft.network.chat.FormattedText;
 
 public abstract class OptionWidget<T, O extends IOption<T>> extends BaseWidget {
 	protected final O option;
-	protected T modifiedValue;
 
 	public OptionWidget(Rect2i rect, O option) {
 		super(rect, option.getName());
 
 		this.option = option;
-
-		this.modifiedValue = this.option.getValue();
 	}
 
 	@Override

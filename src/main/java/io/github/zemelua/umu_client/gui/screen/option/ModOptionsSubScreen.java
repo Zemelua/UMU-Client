@@ -18,10 +18,6 @@ public class ModOptionsSubScreen extends Screen {
 	private final Screen root;
 	private final ImmutableList<ModOptionPage> pages;
 
-	private final SimpleButtonWidget applyButton;
-	private final SimpleButtonWidget closeButton;
-	private final SimpleButtonWidget undoButton;
-
 	private int currentPage;
 
 	protected ModOptionsSubScreen(Screen root, ImmutableList<ModOptionPage> pages) {
@@ -31,21 +27,6 @@ public class ModOptionsSubScreen extends Screen {
 		this.pages = pages;
 
 		this.currentPage = 0;
-
-		this.undoButton = new SimpleButtonWidget(
-				new Rect2i(this.width - 211, this.height - 30, 65, 20),
-				new TranslatableComponent("sodium.options.buttons.undo"),
-				this::undo
-		);
-		this.applyButton = new SimpleButtonWidget(
-				new Rect2i(this.width - 142, this.height - 30, 65, 20),
-				new TranslatableComponent("sodium.options.buttons.apply"),
-				this::apply);
-		this.closeButton = new SimpleButtonWidget(
-				new Rect2i(this.width - 73, this.height - 30, 65, 20),
-				new TranslatableComponent("gui.done"),
-				this::onClose
-		);
 	}
 
 	@Override
@@ -57,15 +38,27 @@ public class ModOptionsSubScreen extends Screen {
 		this.initPageButtons();
 		this.initOptionWidgets();
 
-		this.addRenderableWidget(this.undoButton);
-		this.addRenderableWidget(this.applyButton);
-		this.addRenderableWidget(this.closeButton);
+		this.addRenderableWidget(new SimpleButtonWidget(
+				new Rect2i(this.width - 211, this.height - 30, 65, 20),
+				new TranslatableComponent("screen.options.buttons.undo"),
+				this::undo
+		));
+		this.addRenderableWidget(new SimpleButtonWidget(
+				new Rect2i(this.width - 142, this.height - 30, 65, 20),
+				new TranslatableComponent("screen.options.buttons.apply"),
+				this::apply
+		));
+		this.addRenderableWidget(new SimpleButtonWidget(
+				new Rect2i(this.width - 73, this.height - 30, 65, 20),
+				new TranslatableComponent("gui.done"),
+				this::onClose
+		));
 	}
 
 	private void initPageButtons() {
 		int x = 6;
 		int y = 6;
-		int width = 48;
+		int width = (this.width - 6) / 5 - 6;
 		int height = 18;
 
 		for (int i = 0; i < this.pages.size(); i++) {
@@ -112,7 +105,7 @@ public class ModOptionsSubScreen extends Screen {
 	}
 
 	private void apply() {
-
+		this.getAllOptions().forEach(IOption::save);
 	}
 
 	private void undo() {

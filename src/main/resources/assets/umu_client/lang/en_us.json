@@ -2,6 +2,9 @@
 	"umu_client.screen.options.page.dynamic_light": "Dynamic Light",
 	"umu_client.screen.options.page.visual": "Visual",
 
+	"umu_client.screen.options.button.undo": "Undo",
+	"umu_client.screen.options.button.apply": "Apply",
+
 	"umu_client.option.video.dynamic_light_enable": "Enable Dynamic Light",
 	"umu_client.option.video.dynamic_light_enable.description": "Enable dynamic light. When off, the performance can be significantly improved.",
 	"umu_client.option.video.dynamic_light_brightness": "Dynamic Light Brightness",

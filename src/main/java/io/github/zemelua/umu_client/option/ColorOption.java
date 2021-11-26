@@ -14,7 +14,7 @@ public class ColorOption extends RangeOption<Integer> {
 
 	public ColorOption(Integer defaultValue, Function<Integer, Integer> colorGetter,
 					   Function<ClientConfig, ConfigValue<Integer>> cache, Component name, Component description) {
-		super(defaultValue, 255, 0, cache, name, description);
+		super(defaultValue, 255, 0, Double::intValue, cache, name, description);
 
 		this.colorGetter = colorGetter;
 	}
@@ -79,6 +79,11 @@ public class ColorOption extends RangeOption<Integer> {
 
 				this.drawRect(matrixStack, startX + 1 + i, startY + 1, startX + 2 + i, endY - 1, colorGradation);
 			}
+		}
+
+		@Override
+		protected int getValueWidth() {
+			return this.getSliderSize() + 20;
 		}
 	}
 }

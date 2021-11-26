@@ -4,4 +4,6 @@ public interface IRangeOption<T extends Number> {
 	T getMax();
 
 	T getMin();
+
+	void setModifiedValue(Double value);
 }

@@ -30,10 +30,10 @@ public class SwitchOption extends IOption.BaseOption<Boolean> {
 			int startY = this.rect.getY() + this.rect.getHeight() / 2 - 5;
 			int endX = startX + 10;
 			int endY = startY + 10;
-			int color = this.option.getValue() ? 0xFF94E4D3 : 0xFFFFFFFF;
+			int color = this.option.getModifiedValue() ? 0xFF94E4D3 : 0xFFFFFFFF;
 
 			this.drawRectOutline(matrixStack, startX, startY, endX, endY, color);
-			if (this.option.getValue()) {
+			if (this.option.getModifiedValue()) {
 				this.drawRect(matrixStack, startX + 2, startY + 2, endX - 2, endY - 2, color);
 			}
 		}
@@ -46,7 +46,7 @@ public class SwitchOption extends IOption.BaseOption<Boolean> {
 		@Override
 		public boolean mouseClicked(double mouseX, double mouseY, int button) {
 			if (button == 0 && this.rect.contains((int) mouseX, (int) mouseY)) {
-				this.option.setValue(!this.option.getValue());
+				this.option.setModifiedValue(!this.option.getModifiedValue());
 				this.playClickSound();
 
 				return true;

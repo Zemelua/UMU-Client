@@ -58,7 +58,7 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 	}
 
 	protected void drawBackGround(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		int backGroundColor = this.enabled ? (hovered ? 0xE0000000 : 0x80000000) : 0x60000000;
+		int backGroundColor = this.enabled ? (hovered ? 0x90404040 : 0x90000000) : 0x60000000;
 		int limitX = this.rect.getX() + this.rect.getWidth();
 		int limitY = this.rect.getY() + this.rect.getHeight();
 
@@ -67,8 +67,8 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 
 	protected void drawLabel(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		int labelColor = this.enabled ? 0xFFFFFFFF : 0x90FFFFFF;
-		int centerX = this.rect.getX() + (this.rect.getWidth() / 2);
-		int centerY = this.rect.getY() + (this.rect.getHeight() / 2);
+		int centerX = this.rect.getX() + this.rect.getWidth() / 2;
+		int centerY = this.rect.getY() + this.rect.getHeight() / 2;
 
 		this.drawTextCenter(matrixStack, this.label, centerX, centerY, labelColor);
 	}
@@ -102,7 +102,7 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 	}
 
 	protected void drawTextCenter(PoseStack matrixStack, Component text, int drawX, int drawY, int color) {
-		this.drawText(matrixStack, text, drawX - this.font.width(text.getVisualOrderText()) / 2, drawY, color);
+		this.drawText(matrixStack, text, drawX - this.font.width(text.getVisualOrderText()) / 2, drawY - 4, color);
 	}
 
 	protected void playClickSound() {
