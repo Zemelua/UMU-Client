@@ -31,6 +31,10 @@ public interface IOption<T> {
 		this.setValue(this.getModifiedValue());
 	}
 
+	void reset();
+
+	boolean isChanged();
+
 	abstract class BaseOption<T> implements IOption<T> {
 		private final T defaultValue;
 		private final Function<ClientConfig, ConfigValue<T>> cache;
@@ -76,6 +80,21 @@ public interface IOption<T> {
 		@Override
 		public Component getDescription() {
 			return this.description;
+		}
+
+		@Override
+		public void reset() {
+//			this.cache.apply(UMUClient.CONFIG_CLIENT).clearCache();
+//			this.load();
+//			this.save();
+
+			this.setModifiedValue(this.defaultValue);
+			this.save();
+		}
+
+		@Override
+		public boolean isChanged() {
+			return !this.getValue().equals(this.getModifiedValue());
 		}
 
 		public T getDefaultValue() {

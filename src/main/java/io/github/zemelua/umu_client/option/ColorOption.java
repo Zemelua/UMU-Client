@@ -32,6 +32,10 @@ public class ColorOption extends RangeOption<Integer> {
 		return this.colorGetter.apply(value);
 	}
 
+	public int getModifiableColor() {
+		return this.colorGetter.apply(this.getModifiedValue());
+	}
+
 	protected static class Widget extends RangeOption.Widget<Integer, ColorOption> {
 		public Widget(Rect2i rect, ColorOption option) {
 			super(rect, option);
@@ -58,7 +62,7 @@ public class ColorOption extends RangeOption<Integer> {
 			int color = 0xFFFFFFFF;
 
 			this.drawRectOutline(matrixStack, startX, startY, endX, endY, color);
-			this.drawRect(matrixStack, startX + 1, startY + 1, endX - 1, endY - 1, this.option.getColor());
+			this.drawRect(matrixStack, startX + 1, startY + 1, endX - 1, endY - 1, this.option.getModifiableColor());
 		}
 
 		@Override

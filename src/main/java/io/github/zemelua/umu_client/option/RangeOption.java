@@ -139,7 +139,7 @@ public class RangeOption<T extends Number> extends IOption.BaseOption<T> impleme
 		}
 
 		protected int getSliderSize() {
-			if (!this.hasHovered) return 0;
+			if (!this.hasHovered) return 90;
 
 			if (this.hovered) {
 				return Math.min(90, (int) (this.touchedTick * 36));

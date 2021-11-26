@@ -2,6 +2,7 @@ package io.github.zemelua.umu_client.gui.screen.option;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
+import io.github.zemelua.umu_client.UMUClient;
 import io.github.zemelua.umu_client.gui.screen.widget.OptionWidget;
 import io.github.zemelua.umu_client.gui.screen.widget.SelectableButtonWidget;
 import io.github.zemelua.umu_client.gui.screen.widget.SimpleButtonWidget;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.stream.Stream;
 
@@ -39,13 +41,8 @@ public class ModOptionsSubScreen extends Screen {
 		this.initOptionWidgets();
 
 		this.addRenderableWidget(new SimpleButtonWidget(
-				new Rect2i(this.width - 211, this.height - 30, 65, 20),
-				new TranslatableComponent("screen.options.buttons.undo"),
-				this::undo
-		));
-		this.addRenderableWidget(new SimpleButtonWidget(
 				new Rect2i(this.width - 142, this.height - 30, 65, 20),
-				new TranslatableComponent("screen.options.buttons.apply"),
+				UMUClient.component("screen.options.button.apply"),
 				this::apply
 		));
 		this.addRenderableWidget(new SimpleButtonWidget(
@@ -53,6 +50,8 @@ public class ModOptionsSubScreen extends Screen {
 				new TranslatableComponent("gui.done"),
 				this::onClose
 		));
+
+		this.initUndoOrResetButton();
 	}
 
 	private void initPageButtons() {
@@ -93,13 +92,48 @@ public class ModOptionsSubScreen extends Screen {
 		}
 	}
 
+	@Nullable
+	private SimpleButtonWidget undoOrResetButton;
+
+	private void initUndoOrResetButton() {
+		if (this.undoOrResetButton != null) {
+			this.removeWidget(this.undoOrResetButton);
+		}
+
+		if (this.getAllOptions().anyMatch(IOption::isChanged)) {
+			this.undoOrResetButton = new SimpleButtonWidget(
+					new Rect2i(this.width - 211, this.height - 30, 65, 20),
+					UMUClient.component("screen.options.button.undo"),
+					this::undo
+			);
+		} else {
+			this.undoOrResetButton = new SimpleButtonWidget(
+					new Rect2i(this.width - 211, this.height - 30, 65, 20),
+					UMUClient.component("screen.options.button.reset"),
+					this::reset
+			);
+		}
+
+		this.addRenderableWidget(this.undoOrResetButton);
+	}
+
 	@Override
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		super.renderBackground(matrixStack);
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 	}
 
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		boolean result = super.mouseClicked(mouseX, mouseY, button);
+
+		this.initUndoOrResetButton();
+
+		return result;
+	}
+
 	private void setPage(int index) {
+		this.getAllOptions().forEach(IOption::load);
 		this.currentPage = index;
 		this.init();
 	}
@@ -112,11 +146,13 @@ public class ModOptionsSubScreen extends Screen {
 		this.getAllOptions().forEach(IOption::load);
 	}
 
+	private void reset() {
+		this.getAllOptions().forEach(IOption::reset);
+	}
+
 	private Stream<IOption<?>> getAllOptions() {
-		return this.pages.stream()
-				.flatMap(page -> page.getGroups().stream()
-						.flatMap(Collection::stream)
-				);
+		return this.pages.get(this.currentPage).getGroups().stream()
+				.flatMap(Collection::stream);
 	}
 
 	@Override

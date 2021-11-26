@@ -37,6 +37,7 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 
 		this.enabled = true;
 		this.hovered = false;
+		this.hasHovered = false;
 	}
 
 	@Override
@@ -71,6 +72,13 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 		int centerY = this.rect.getY() + this.rect.getHeight() / 2;
 
 		this.drawTextCenter(matrixStack, this.label, centerX, centerY, labelColor);
+	}
+
+	@Override
+	public boolean isMouseOver(double mouseX, double mouseY) {
+		if (this.rect.contains((int) mouseX, (int) mouseY) && !this.hasHovered) this.hasHovered = true;
+
+		return this.rect.contains((int) mouseX, (int) mouseY);
 	}
 
 	@Override

@@ -24,14 +24,12 @@ public class SelectableButtonWidget extends SimpleButtonWidget {
 
 		if (this.selected) {
 			this.selectedTick += partialTicks;
-
-			if (!this.hasSelected) this.hasSelected = true;
 		} else {
 			this.selectedTick = 0.0D;
 		}
 
 		if (this.enabled && this.getUnderLineSize() > 0) {
-			int startX = this.rect.getX() + this.rect.getWidth() / 2 - this.getUnderLineSize() / 2 ;
+			int startX = this.rect.getX() + this.rect.getWidth() / 2 - this.getUnderLineSize() / 2;
 			int startY = this.rect.getY() + this.rect.getHeight() - 1;
 			int endX = startX + this.getUnderLineSize();
 			int endY = startY + 1;
@@ -42,13 +40,18 @@ public class SelectableButtonWidget extends SimpleButtonWidget {
 	}
 
 	protected int getUnderLineSize() {
-		if (this.hasSelected) {
-			if (this.selected) {
-				return Math.min(this.rect.getWidth(), (int) (this.selectedTick * 36));
-			}
-		}
+		if (!this.hasSelected && this.selected) return this.rect.getWidth();
 
-		return 0;
+		return Math.min(this.rect.getWidth(), (int) (this.selectedTick * 36));
+	}
+
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		boolean result = super.mouseClicked(mouseX, mouseY, button);
+
+		if (result && !this.hasSelected) this.hasSelected = true;
+
+		return result;
 	}
 
 	public void setSelected(boolean selected) {
