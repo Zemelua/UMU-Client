@@ -19,7 +19,7 @@ public class SwitchOption extends IOption.BaseOption<Boolean> {
 		return new Widget(new Rect2i(startX, startY, sizeX, sizeY), this);
 	}
 
-	protected static class Widget extends OptionWidget<Boolean, IOption<Boolean>> {
+	public static class Widget extends OptionWidget<Boolean, IOption<Boolean>> {
 		public Widget(Rect2i rect, IOption<Boolean> option) {
 			super(rect, option);
 		}
@@ -30,7 +30,7 @@ public class SwitchOption extends IOption.BaseOption<Boolean> {
 			int startY = this.rect.getY() + this.rect.getHeight() / 2 - 5;
 			int endX = startX + 10;
 			int endY = startY + 10;
-			int color = this.option.getModifiedValue() ? 0xFF94E4D3 : 0xFFFFFFFF;
+			int color = 0xFFFFFFFF;
 
 			this.drawRectOutline(matrixStack, startX, startY, endX, endY, color);
 			if (this.option.getModifiedValue()) {

@@ -5,23 +5,35 @@ import io.github.zemelua.umu_client.config.ClientConfig;
 import io.github.zemelua.umu_client.gui.screen.widget.OptionWidget;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class RangeOption<T extends Number> extends IOption.BaseOption<T> implements IRangeOption<T> {
 	private final T maxValue;
 	private final T minValue;
 	private final Function<Double, T> converter;
+	private final BiFunction<RangeOption<T>, Boolean, Component> valueAsText;
 
 	public RangeOption(T defaultValue, T maxValue, T minValue, Function<Double, T> converter,
 					   Function<ClientConfig, ConfigValue<T>> cache, Component name, Component description) {
+		this(defaultValue, maxValue, minValue, converter, cache, name, description, (option, compact)
+				-> new TextComponent(option.getModifiedValue().toString())
+		);
+	}
+
+	public RangeOption(T defaultValue, T maxValue, T minValue, Function<Double, T> converter,
+					   Function<ClientConfig, ConfigValue<T>> cache, Component name, Component description,
+					   BiFunction<RangeOption<T>, Boolean, Component> valueAsText) {
 		super(defaultValue, cache, name, description);
 
 		this.maxValue = maxValue;
 		this.minValue = minValue;
 		this.converter = converter;
+		this.valueAsText = valueAsText;
 	}
 
 	@Override
@@ -43,7 +55,12 @@ public class RangeOption<T extends Number> extends IOption.BaseOption<T> impleme
 		this.setModifiedValue(this.converter.apply(value));
 	}
 
-	protected static class Widget<T extends Number, O extends IOption<T> & IRangeOption<T>> extends OptionWidget<T, O> {
+	@Override
+	public Component getModifiedValueAsText(boolean isCompact) {
+		return this.valueAsText.apply(this, isCompact);
+	}
+
+	public static class Widget<T extends Number, O extends IOption<T> & IRangeOption<T>> extends OptionWidget<T, O> {
 		private double thumbPos;
 
 		public Widget(Rect2i rect, O option) {
@@ -68,7 +85,7 @@ public class RangeOption<T extends Number> extends IOption.BaseOption<T> impleme
 		}
 
 		protected void drawCompact(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-			String valueText = this.option.getModifiedValue().toString();
+			Component valueText = this.option.getModifiedValueAsText(this.getSliderSize() > 0);
 			int drawX = this.rect.getX() + this.rect.getWidth() - 6 - this.font.width(valueText) - this.getSliderSize()
 					- this.getSliderSize() / 90 * 4;
 			int drawY = this.rect.getY() + this.rect.getHeight() / 2 - 4;
@@ -139,7 +156,7 @@ public class RangeOption<T extends Number> extends IOption.BaseOption<T> impleme
 		}
 
 		protected int getSliderSize() {
-			if (!this.hasHovered) return 90;
+			if (!this.hasHovered) return 0;
 
 			if (this.hovered) {
 				return Math.min(90, (int) (this.touchedTick * 36));

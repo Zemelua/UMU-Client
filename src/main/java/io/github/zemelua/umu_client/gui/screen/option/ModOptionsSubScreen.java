@@ -13,16 +13,15 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.stream.Stream;
 
 public class ModOptionsSubScreen extends Screen {
 	private final Screen root;
-	private final ImmutableList<ModOptionPage> pages;
+	private final ImmutableList<ModOptionPages.Page> pages;
 
 	private int currentPage;
 
-	protected ModOptionsSubScreen(Screen root, ImmutableList<ModOptionPage> pages) {
+	protected ModOptionsSubScreen(Screen root, ImmutableList<ModOptionPages.Page> pages) {
 		super(new TextComponent("UMU Client Options"));
 
 		this.root = root;
@@ -61,7 +60,7 @@ public class ModOptionsSubScreen extends Screen {
 		int height = 18;
 
 		for (int i = 0; i < this.pages.size(); i++) {
-			ModOptionPage page = this.pages.get(i);
+			ModOptionPages.Page page = this.pages.get(i);
 
 			int finalI = i;
 			SelectableButtonWidget button = new SelectableButtonWidget(
@@ -79,8 +78,8 @@ public class ModOptionsSubScreen extends Screen {
 		int x = 6;
 		int y = 28;
 
-		for (ImmutableList<IOption<?>> group : this.pages.get(this.currentPage).getGroups()) {
-			for (IOption<?> option : group) {
+		for (ModOptionPages.Group group : this.pages.get(this.currentPage).getGroups()) {
+			for (IOption<?> option : group.getOptions()) {
 				OptionWidget<?, ? extends IOption<?>> widget = option.createWidget(x, y, this.width / 2 - 8, 20);
 
 				this.addRenderableWidget(widget);
@@ -152,7 +151,7 @@ public class ModOptionsSubScreen extends Screen {
 
 	private Stream<IOption<?>> getAllOptions() {
 		return this.pages.get(this.currentPage).getGroups().stream()
-				.flatMap(Collection::stream);
+				.flatMap(g -> g.getOptions().stream());
 	}
 
 	@Override

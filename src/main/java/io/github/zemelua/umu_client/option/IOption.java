@@ -33,7 +33,9 @@ public interface IOption<T> {
 
 	void reset();
 
-	boolean isChanged();
+	default boolean isChanged() {
+		return !this.getValue().equals(this.getModifiedValue());
+	}
 
 	abstract class BaseOption<T> implements IOption<T> {
 		private final T defaultValue;
@@ -90,11 +92,6 @@ public interface IOption<T> {
 
 			this.setModifiedValue(this.defaultValue);
 			this.save();
-		}
-
-		@Override
-		public boolean isChanged() {
-			return !this.getValue().equals(this.getModifiedValue());
 		}
 
 		public T getDefaultValue() {

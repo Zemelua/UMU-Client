@@ -2,6 +2,7 @@ package io.github.zemelua.umu_client.gui.screen.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.zemelua.umu_client.option.IOption;
+import io.github.zemelua.umu_client.option.ModOptions;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.FormattedText;
 
@@ -12,6 +13,7 @@ public abstract class OptionWidget<T, O extends IOption<T>> extends BaseWidget {
 		super(rect, option.getName());
 
 		this.option = option;
+		this.option.load();
 	}
 
 	@Override
@@ -24,7 +26,7 @@ public abstract class OptionWidget<T, O extends IOption<T>> extends BaseWidget {
 
 		int drawX = this.rect.getX() + 6;
 		int drawY = this.rect.getY() + this.rect.getHeight() / 2 - 4;
-		int labelColor = this.enabled ? 0xFFFFFFFF : 0x90FFFFFF;
+		int labelColor = this.enabled ? this.getLabelColor() : 0x90FFFFFF;
 
 		this.drawText(matrixStack, label.getString(), drawX, drawY, labelColor);
 		this.drawValue(matrixStack, mouseX, mouseY, partialTicks);
@@ -33,4 +35,8 @@ public abstract class OptionWidget<T, O extends IOption<T>> extends BaseWidget {
 	protected abstract void drawValue(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks);
 
 	protected abstract int getValueWidth();
+
+	protected int getLabelColor() {
+		return this.option.isChanged() ? ModOptions.THEME_COLOR.getColor() : 0xFFFFFFFF;
+	}
 }
