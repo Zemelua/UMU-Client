@@ -3,17 +3,19 @@ package io.github.zemelua.umu_client.gui.screen.widget;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.zemelua.umu_client.option.IOption;
 import io.github.zemelua.umu_client.option.ModOptions;
-import net.minecraft.client.renderer.Rect2i;
+import io.github.zemelua.umu_client.util.Rect2i;
 import net.minecraft.network.chat.FormattedText;
 
 public abstract class OptionWidget<T, O extends IOption<T>> extends BaseWidget {
 	protected final O option;
 
+	protected T modifiableValue;
+
 	public OptionWidget(Rect2i rect, O option) {
 		super(rect, option.getName());
 
 		this.option = option;
-		this.option.load();
+		this.modifiableValue = this.option.getValue();
 	}
 
 	@Override
@@ -36,7 +38,28 @@ public abstract class OptionWidget<T, O extends IOption<T>> extends BaseWidget {
 
 	protected abstract int getValueWidth();
 
+	protected int getValueColor() {
+		return 0xFFFFFFFF;
+	}
+
 	protected int getLabelColor() {
-		return this.option.isChanged() ? ModOptions.THEME_COLOR.getColor() : 0xFFFFFFFF;
+		return this.isChanged() ? ModOptions.THEME_COLOR.getColor() : 0xFFFFFFFF;
+	}
+
+	public void load() {
+		this.modifiableValue = this.option.getValue();
+	}
+
+	public void save() {
+		this.option.setValue(this.modifiableValue);
+	}
+
+	public void reset() {
+		this.option.reset();
+		this.load();
+	}
+
+	public boolean isChanged() {
+		return !this.modifiableValue.equals(this.option.getValue());
 	}
 }

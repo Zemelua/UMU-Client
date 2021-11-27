@@ -2,6 +2,7 @@ package io.github.zemelua.umu_client.option;
 
 import io.github.zemelua.umu_client.UMUClient;
 import io.github.zemelua.umu_client.config.ClientConfig;
+import net.minecraft.network.chat.TextComponent;
 
 import java.awt.*;
 
@@ -11,10 +12,11 @@ public final class ModOptions {
 			UMUClient.component("option.video.dynamic_light_enable"),
 			UMUClient.component("option.video.dynamic_light_enable.description")
 	);
-	public static final RangeOption<Integer> DYNAMIC_LIGHT_BRIGHTNESS = new RangeOption<>(
-			15, 15, 1, Double::intValue, ClientConfig::getDynamicLightBrightness,
+	public static final RangeOption DYNAMIC_LIGHT_BRIGHTNESS = new RangeOption(
+			15, 15, 1, ClientConfig::getDynamicLightBrightness,
 			UMUClient.component("option.video.dynamic_light_brightness"),
-			UMUClient.component("option.video.dynamic_light_brightness.description")
+			UMUClient.component("option.video.dynamic_light_brightness.description"),
+			(value, options, small) -> new TextComponent(value.toString())
 	);
 
 	public static final ColorOption THEME_COLOR = new ColorOption(

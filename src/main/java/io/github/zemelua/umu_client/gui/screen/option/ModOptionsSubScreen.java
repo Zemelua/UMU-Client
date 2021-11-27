@@ -8,16 +8,20 @@ import io.github.zemelua.umu_client.gui.screen.widget.SelectableButtonWidget;
 import io.github.zemelua.umu_client.gui.screen.widget.SimpleButtonWidget;
 import io.github.zemelua.umu_client.option.IOption;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.Rect2i;
+import io.github.zemelua.umu_client.util.Rect2i;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class ModOptionsSubScreen extends Screen {
 	private final Screen root;
 	private final ImmutableList<ModOptionPages.Page> pages;
+
+	private final List<OptionWidget<?, ?>> optionWidgets = new ArrayList<>();
 
 	private int currentPage;
 
@@ -75,14 +79,17 @@ public class ModOptionsSubScreen extends Screen {
 	}
 
 	private void initOptionWidgets() {
+		this.optionWidgets.clear();
+
 		int x = 6;
 		int y = 28;
 
 		for (ModOptionPages.Group group : this.pages.get(this.currentPage).getGroups()) {
 			for (IOption<?> option : group.getOptions()) {
-				OptionWidget<?, ? extends IOption<?>> widget = option.createWidget(x, y, this.width / 2 - 8, 20);
+				OptionWidget<?, ? extends IOption<?>> widget = option.createWidget(new Rect2i(x, y, this.width / 2 - 8, 20));
 
 				this.addRenderableWidget(widget);
+				this.optionWidgets.add(widget);
 
 				y += 20;
 			}
@@ -99,7 +106,7 @@ public class ModOptionsSubScreen extends Screen {
 			this.removeWidget(this.undoOrResetButton);
 		}
 
-		if (this.getAllOptions().anyMatch(IOption::isChanged)) {
+		if (this.getAllOptionWidgets().anyMatch(OptionWidget::isChanged)) {
 			this.undoOrResetButton = new SimpleButtonWidget(
 					new Rect2i(this.width - 211, this.height - 30, 65, 20),
 					UMUClient.component("screen.options.button.undo"),
@@ -132,26 +139,25 @@ public class ModOptionsSubScreen extends Screen {
 	}
 
 	private void setPage(int index) {
-		this.getAllOptions().forEach(IOption::load);
+		this.undo();
 		this.currentPage = index;
 		this.init();
 	}
 
-	private void apply() {
-		this.getAllOptions().forEach(IOption::save);
+	private void undo() {
+		this.getAllOptionWidgets().forEach(OptionWidget::load);
 	}
 
-	private void undo() {
-		this.getAllOptions().forEach(IOption::load);
+	private void apply() {
+		this.getAllOptionWidgets().forEach(OptionWidget::save);
 	}
 
 	private void reset() {
-		this.getAllOptions().forEach(IOption::reset);
+		this.getAllOptionWidgets().forEach(OptionWidget::reset);
 	}
 
-	private Stream<IOption<?>> getAllOptions() {
-		return this.pages.get(this.currentPage).getGroups().stream()
-				.flatMap(g -> g.getOptions().stream());
+	private Stream<OptionWidget<?, ?>> getAllOptionWidgets() {
+		return this.optionWidgets.stream();
 	}
 
 	@Override

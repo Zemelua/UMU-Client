@@ -8,13 +8,18 @@ import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.Rect2i;
+import io.github.zemelua.umu_client.util.Rect2i;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 
 public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventListener {
+	protected static final int BACKGROUND_DISABLED_COLOR = 0x60000000;
+	protected static final int BACKGROUND_BASE_COLOR = 0x90000000;
+	protected static final int BACKGROUND_HOVERED_COLOR = 0x90404040;
+	protected static final int TEXT_COLOR = 0xFFFFFFFF;
+
 	protected final Rect2i rect;
 	protected final Component label;
 	protected final Font font;
@@ -59,11 +64,13 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 	}
 
 	protected void drawBackGround(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		int backGroundColor = this.enabled ? (hovered ? 0x90404040 : 0x90000000) : 0x60000000;
-		int limitX = this.rect.getX() + this.rect.getWidth();
-		int limitY = this.rect.getY() + this.rect.getHeight();
+		int startX = this.rect.getX();
+		int startY = this.rect.getY();
+		int endX = this.rect.getLimitX();
+		int endY = this.rect.getLimitY();
+		int backGroundColor = this.getBackgroundColor();
 
-		this.drawRect(matrixStack, this.rect.getX(), this.rect.getY(), limitX, limitY, backGroundColor);
+		this.drawRect(matrixStack, startX, startY, endX, endY, backGroundColor);
 	}
 
 	protected void drawLabel(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
@@ -115,5 +122,9 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 
 	protected void playClickSound() {
 		this.speaker.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+	}
+
+	protected int getBackgroundColor() {
+		return this.enabled ? (hovered ? BACKGROUND_HOVERED_COLOR : BACKGROUND_BASE_COLOR) : BACKGROUND_DISABLED_COLOR;
 	}
 }

@@ -3,70 +3,55 @@ package io.github.zemelua.umu_client.option;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.zemelua.umu_client.config.ClientConfig;
 import io.github.zemelua.umu_client.gui.screen.widget.OptionWidget;
-import net.minecraft.client.renderer.Rect2i;
+import io.github.zemelua.umu_client.util.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class RangeOption<T extends Number> extends IOption.BaseOption<T> implements IRangeOption<T> {
-	private final T maxValue;
-	private final T minValue;
-	private final Function<Double, T> converter;
-	private final BiFunction<RangeOption<T>, Boolean, Component> valueAsText;
+public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOption<Integer> {
+	private final Integer minValue;
+	private final Integer maxValue;
+	private final Widget.IValueFormatter<Integer, RangeOption> valueFormatter;
 
-	public RangeOption(T defaultValue, T maxValue, T minValue, Function<Double, T> converter,
-					   Function<ClientConfig, ConfigValue<T>> cache, Component name, Component description) {
-		this(defaultValue, maxValue, minValue, converter, cache, name, description, (option, compact)
-				-> new TextComponent(option.getModifiedValue().toString())
-		);
-	}
-
-	public RangeOption(T defaultValue, T maxValue, T minValue, Function<Double, T> converter,
-					   Function<ClientConfig, ConfigValue<T>> cache, Component name, Component description,
-					   BiFunction<RangeOption<T>, Boolean, Component> valueAsText) {
+	public RangeOption(Integer defaultValue, Integer minValue, Integer maxValue,
+					   Function<ClientConfig, ConfigValue<Integer>> cache, Component name, Component description,
+					   Widget.IValueFormatter<Integer, RangeOption> valueFormatter) {
 		super(defaultValue, cache, name, description);
 
-		this.maxValue = maxValue;
 		this.minValue = minValue;
-		this.converter = converter;
-		this.valueAsText = valueAsText;
+		this.maxValue = maxValue;
+		this.valueFormatter = valueFormatter;
 	}
 
 	@Override
-	public OptionWidget<T, ? extends IOption<T>> createWidget(int startX, int startY, int sizeX, int sizeY) {
-		return new Widget<>(new Rect2i(startX, startY, sizeX, sizeY), this);
+	public OptionWidget<Integer, ? extends IOption<Integer>> createWidget(Rect2i rect) {
+		return new Widget<>(rect, this, Double::intValue);
 	}
 
 	@Override
-	public T getMax() {
+	public Integer getMin() {
+		return this.minValue;
+	}
+
+	@Override
+	public Integer getMax() {
 		return this.maxValue;
 	}
 
 	@Override
-	public T getMin() {
-		return this.minValue;
-	}
-
-	public void setModifiedValue(Double value) {
-		this.setModifiedValue(this.converter.apply(value));
-	}
-
-	@Override
-	public Component getModifiedValueAsText(boolean isCompact) {
-		return this.valueAsText.apply(this, isCompact);
+	public Component valueFormat(Integer value, boolean small) {
+		return this.valueFormatter.format(value, this, small);
 	}
 
 	public static class Widget<T extends Number, O extends IOption<T> & IRangeOption<T>> extends OptionWidget<T, O> {
-		private double thumbPos;
+		private final Function<Double, T> converter;
 
-		public Widget(Rect2i rect, O option) {
+		public Widget(Rect2i rect, O option, Function<Double, T> converter) {
 			super(rect, option);
 
-			this.loadThumbPos();
+			this.converter = converter;
 		}
 
 		@Override
@@ -85,10 +70,10 @@ public class RangeOption<T extends Number> extends IOption.BaseOption<T> impleme
 		}
 
 		protected void drawCompact(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-			Component valueText = this.option.getModifiedValueAsText(this.getSliderSize() > 0);
-			int drawX = this.rect.getX() + this.rect.getWidth() - 6 - this.font.width(valueText) - this.getSliderSize()
+			Component valueText = this.option.valueFormat(this.modifiableValue, !this.hovered);
+			int drawX = this.rect.getLimitX() - 6 - this.font.width(valueText) - this.getSliderSize()
 					- this.getSliderSize() / 90 * 4;
-			int drawY = this.rect.getY() + this.rect.getHeight() / 2 - 4;
+			int drawY = this.rect.getMiddleY() - 4;
 
 			this.drawText(matrixStack, valueText, drawX, drawY, 0xFFFFFFFF);
 		}
@@ -104,10 +89,8 @@ public class RangeOption<T extends Number> extends IOption.BaseOption<T> impleme
 		}
 
 		protected void drawThumb(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-			this.loadThumbPos();
-
 			int thumbStartX = (int) (this.rect.getX() + this.rect.getWidth() - this.getSliderSize() - 6
-					+ this.thumbPos * this.getSliderSize());
+					+ this.getThumbPos() * this.getSliderSize());
 			int thumbStartY = this.rect.getY() + this.rect.getHeight() / 2 - 5;
 			int thumbEndX = thumbStartX + 2;
 			int thumbEndY = thumbStartY + 10;
@@ -146,12 +129,12 @@ public class RangeOption<T extends Number> extends IOption.BaseOption<T> impleme
 		private void setValue(double newValue) {
 			double valuePercent = Mth.clamp(newValue, 0.0D, 1.0D);
 
-			this.option.setModifiedValue(this.option.getMin().doubleValue() + valuePercent
+			this.modifiableValue = this.converter.apply(this.option.getMin().doubleValue() + valuePercent
 					* (this.option.getMax().doubleValue() - this.option.getMin().doubleValue()));
 		}
 
-		private void loadThumbPos() {
-			this.thumbPos = (this.option.getModifiedValue().doubleValue() - this.option.getMin().doubleValue())
+		private double getThumbPos() {
+			return (this.modifiableValue.doubleValue() - this.option.getMin().doubleValue())
 					/ (this.option.getMax().doubleValue() - this.option.getMin().doubleValue());
 		}
 
@@ -163,6 +146,10 @@ public class RangeOption<T extends Number> extends IOption.BaseOption<T> impleme
 			} else {
 				return Math.min(90, Math.max(0, (int) ((-this.leftTick + 5.0D) * 36)));
 			}
+		}
+
+		public interface IValueFormatter<T extends Number, O extends IOption<T> & IRangeOption> {
+			Component format(T value, O option, boolean small);
 		}
 	}
 }

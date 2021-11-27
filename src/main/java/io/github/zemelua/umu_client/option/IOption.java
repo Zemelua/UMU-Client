@@ -3,7 +3,9 @@ package io.github.zemelua.umu_client.option;
 import io.github.zemelua.umu_client.UMUClient;
 import io.github.zemelua.umu_client.config.ClientConfig;
 import io.github.zemelua.umu_client.gui.screen.widget.OptionWidget;
+import io.github.zemelua.umu_client.util.Rect2i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
 import java.util.function.Function;
@@ -13,28 +15,18 @@ public interface IOption<T> {
 
 	void setValue(T value);
 
-	T getModifiedValue();
+	void reset();
 
-	void setModifiedValue(T value);
+	T getDefaultValue();
 
 	Component getName();
 
 	Component getDescription();
 
-	OptionWidget<T, ? extends IOption<T>> createWidget(int startX, int startY, int sizeX, int sizeY);
+	OptionWidget<T, ? extends IOption<T>> createWidget(Rect2i rect);
 
-	default void load() {
-		this.setModifiedValue(this.getValue());
-	}
-
-	default void save() {
-		this.setValue(this.getModifiedValue());
-	}
-
-	void reset();
-
-	default boolean isChanged() {
-		return !this.getValue().equals(this.getModifiedValue());
+	default Component valueFormat(T value, boolean small) {
+		return new TextComponent(value.toString());
 	}
 
 	abstract class BaseOption<T> implements IOption<T> {
@@ -43,15 +35,11 @@ public interface IOption<T> {
 		private final Component name;
 		private final Component description;
 
-		private T modifiedValue;
-
 		public BaseOption(T defaultValue, Function<ClientConfig, ConfigValue<T>> cache, Component name, Component description) {
 			this.defaultValue = defaultValue;
 			this.cache = cache;
 			this.name = name;
 			this.description = description;
-
-			this.modifiedValue = this.defaultValue;
 		}
 
 		@Override
@@ -62,16 +50,7 @@ public interface IOption<T> {
 		@Override
 		public void setValue(T value) {
 			this.cache.apply(UMUClient.CONFIG_CLIENT).set(value);
-		}
-
-		@Override
-		public T getModifiedValue() {
-			return this.modifiedValue;
-		}
-
-		@Override
-		public void setModifiedValue(T modifiedValue) {
-			this.modifiedValue = modifiedValue;
+			this.cache.apply(UMUClient.CONFIG_CLIENT).save();
 		}
 
 		@Override
@@ -86,14 +65,10 @@ public interface IOption<T> {
 
 		@Override
 		public void reset() {
-//			this.cache.apply(UMUClient.CONFIG_CLIENT).clearCache();
-//			this.load();
-//			this.save();
-
-			this.setModifiedValue(this.defaultValue);
-			this.save();
+			this.setValue(this.defaultValue);
 		}
 
+		@Override
 		public T getDefaultValue() {
 			return this.defaultValue;
 		}

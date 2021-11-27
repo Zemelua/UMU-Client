@@ -3,25 +3,26 @@ package io.github.zemelua.umu_client.option;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.zemelua.umu_client.config.ClientConfig;
 import io.github.zemelua.umu_client.gui.screen.widget.OptionWidget;
-import net.minecraft.client.renderer.Rect2i;
+import io.github.zemelua.umu_client.util.Rect2i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
 import java.util.function.Function;
 
-public class ColorOption extends RangeOption<Integer> {
+public class ColorOption extends RangeOption {
 	private final Function<Integer, Integer> colorGetter;
 
 	public ColorOption(Integer defaultValue, Function<Integer, Integer> colorGetter,
 					   Function<ClientConfig, ConfigValue<Integer>> cache, Component name, Component description) {
-		super(defaultValue, 255, 0, Double::intValue, cache, name, description);
+		super(defaultValue, 255, 0, cache, name, description, (value, options, small) -> TextComponent.EMPTY);
 
 		this.colorGetter = colorGetter;
 	}
 
 	@Override
-	public OptionWidget<Integer, ? extends IOption<Integer>> createWidget(int startX, int startY, int sizeX, int sizeY) {
-		return new Widget(new Rect2i(startX, startY, sizeX, sizeY), this);
+	public OptionWidget<Integer, ? extends IOption<Integer>> createWidget(io.github.zemelua.umu_client.util.Rect2i rect) {
+		return new Widget(rect, this);
 	}
 
 	public int getColor() {
@@ -32,13 +33,9 @@ public class ColorOption extends RangeOption<Integer> {
 		return this.colorGetter.apply(value);
 	}
 
-	public int getModifiableColor() {
-		return this.colorGetter.apply(this.getModifiedValue());
-	}
-
 	protected static class Widget extends RangeOption.Widget<Integer, ColorOption> {
 		public Widget(Rect2i rect, ColorOption option) {
-			super(rect, option);
+			super(rect, option, Double::intValue);
 		}
 
 		@Override
@@ -62,7 +59,7 @@ public class ColorOption extends RangeOption<Integer> {
 			int color = 0xFFFFFFFF;
 
 			this.drawRectOutline(matrixStack, startX, startY, endX, endY, color);
-			this.drawRect(matrixStack, startX + 1, startY + 1, endX - 1, endY - 1, this.option.getModifiableColor());
+			this.drawRect(matrixStack, startX + 1, startY + 1, endX - 1, endY - 1, this.option.getColor(this.modifiableValue));
 		}
 
 		@Override

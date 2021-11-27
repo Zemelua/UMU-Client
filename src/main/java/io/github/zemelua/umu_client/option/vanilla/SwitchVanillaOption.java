@@ -1,10 +1,10 @@
-package io.github.zemelua.umu_client.option.forge;
+package io.github.zemelua.umu_client.option.vanilla;
 
 import io.github.zemelua.umu_client.gui.screen.widget.OptionWidget;
 import io.github.zemelua.umu_client.option.IOption;
 import io.github.zemelua.umu_client.option.SwitchOption;
+import io.github.zemelua.umu_client.util.Rect2i;
 import net.minecraft.client.Options;
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.BiConsumer;
@@ -17,7 +17,7 @@ public class SwitchVanillaOption extends BaseVanillaOption<Boolean> {
 	}
 
 	@Override
-	public OptionWidget<Boolean, ? extends IOption<Boolean>> createWidget(int startX, int startY, int sizeX, int sizeY) {
-		return new SwitchOption.Widget(new Rect2i(startX, startY, sizeX, sizeY), this);
+	public OptionWidget<Boolean, ? extends IOption<Boolean>> createWidget(Rect2i rect) {
+		return new SwitchOption.Widget(rect, this);
 	}
 }

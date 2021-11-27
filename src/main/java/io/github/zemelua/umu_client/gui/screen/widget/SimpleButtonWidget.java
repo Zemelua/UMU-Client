@@ -1,7 +1,7 @@
 package io.github.zemelua.umu_client.gui.screen.widget;
 
+import io.github.zemelua.umu_client.util.Rect2i;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 
 public class SimpleButtonWidget extends BaseWidget {

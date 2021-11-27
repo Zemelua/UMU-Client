@@ -2,7 +2,7 @@ package io.github.zemelua.umu_client.gui.screen.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.zemelua.umu_client.option.ModOptions;
-import net.minecraft.client.renderer.Rect2i;
+import io.github.zemelua.umu_client.util.Rect2i;
 import net.minecraft.network.chat.Component;
 
 public class SelectableButtonWidget extends SimpleButtonWidget {

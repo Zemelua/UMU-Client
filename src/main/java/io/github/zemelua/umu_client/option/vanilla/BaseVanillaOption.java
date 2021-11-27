@@ -1,4 +1,4 @@
-package io.github.zemelua.umu_client.option.forge;
+package io.github.zemelua.umu_client.option.vanilla;
 
 import io.github.zemelua.umu_client.option.IOption;
 import net.minecraft.client.Minecraft;
@@ -17,8 +17,6 @@ public abstract class BaseVanillaOption<T> implements IOption<T> {
 	private final Component name;
 	private final Component description;
 
-	private T modifiableValue;
-
 	protected BaseVanillaOption(T defaultValue, Function<Options, T> getter, BiConsumer<Options, T> setter,
 								Component name, Component description) {
 		this.defaultValue = defaultValue;
@@ -26,8 +24,6 @@ public abstract class BaseVanillaOption<T> implements IOption<T> {
 		this.setter = setter;
 		this.name = name;
 		this.description = description;
-
-		this.modifiableValue = this.defaultValue;
 	}
 
 	@Override
@@ -42,13 +38,8 @@ public abstract class BaseVanillaOption<T> implements IOption<T> {
 	}
 
 	@Override
-	public T getModifiedValue() {
-		return this.modifiableValue;
-	}
-
-	@Override
-	public void setModifiedValue(T value) {
-		this.modifiableValue = value;
+	public T getDefaultValue() {
+		return this.defaultValue;
 	}
 
 	@Override
@@ -63,7 +54,6 @@ public abstract class BaseVanillaOption<T> implements IOption<T> {
 
 	@Override
 	public void reset() {
-		this.setModifiedValue(this.defaultValue);
-		this.save();
+		this.setValue(this.defaultValue);
 	}
 }
