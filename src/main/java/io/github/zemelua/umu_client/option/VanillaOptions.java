@@ -1,8 +1,10 @@
 package io.github.zemelua.umu_client.option;
 
 import io.github.zemelua.umu_client.UMUClient;
+import io.github.zemelua.umu_client.option.vanilla.EnumerationVanillaOption;
 import io.github.zemelua.umu_client.option.vanilla.RangeVanillaOption;
 import io.github.zemelua.umu_client.option.vanilla.SwitchVanillaOption;
+import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
 import net.minecraft.network.chat.CommonComponents;
@@ -10,6 +12,12 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 public final class VanillaOptions {
+	public static final EnumerationVanillaOption<GraphicsStatus> GRAPHICS = new EnumerationVanillaOption<>(
+			GraphicsStatus.values(), GraphicsStatus.FANCY, options -> options.graphicsMode,
+			(options, value) -> options.graphicsMode = value, new TranslatableComponent("options.graphics"),
+			UMUClient.component("option.video.graphics.description"), value -> new TranslatableComponent(value.getKey())
+	);
+
 	public static final RangeVanillaOption FRAMERATE_LIMIT = new RangeVanillaOption(
 			120D, Option.FRAMERATE_LIMIT,
 			new TranslatableComponent("options.framerateLimit"),
@@ -68,7 +76,7 @@ public final class VanillaOptions {
 			UMUClient.component("option.video.mipmap_level.description"),
 			(value, options, small) -> value == 0
 					? CommonComponents.OPTION_OFF
-					: new TextComponent(value.toString())
+					: new TextComponent(String.valueOf(value.intValue()))
 	);
 	public static final SwitchVanillaOption ENTITY_SHADOWS = new SwitchVanillaOption(
 			true, options -> options.entityShadows, ((options, value) -> options.entityShadows = value),

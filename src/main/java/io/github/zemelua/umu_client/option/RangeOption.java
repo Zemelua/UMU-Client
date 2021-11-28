@@ -148,7 +148,7 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 			}
 		}
 
-		public interface IValueFormatter<T extends Number, O extends IOption<T> & IRangeOption> {
+		public interface IValueFormatter<T extends Number, O extends IOption<T> & IRangeOption<T>> {
 			Component format(T value, O option, boolean small);
 		}
 	}

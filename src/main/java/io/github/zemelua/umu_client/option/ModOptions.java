@@ -13,7 +13,7 @@ public final class ModOptions {
 			UMUClient.component("option.video.dynamic_light_enable.description")
 	);
 	public static final RangeOption DYNAMIC_LIGHT_BRIGHTNESS = new RangeOption(
-			15, 15, 1, ClientConfig::getDynamicLightBrightness,
+			15, 1, 15, ClientConfig::getDynamicLightBrightness,
 			UMUClient.component("option.video.dynamic_light_brightness"),
 			UMUClient.component("option.video.dynamic_light_brightness.description"),
 			(value, options, small) -> new TextComponent(value.toString())

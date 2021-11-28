@@ -30,7 +30,7 @@ public interface IOption<T> {
 	}
 
 	abstract class BaseOption<T> implements IOption<T> {
-		private final T defaultValue;
+		protected final T defaultValue;
 		private final Function<ClientConfig, ConfigValue<T>> cache;
 		private final Component name;
 		private final Component description;

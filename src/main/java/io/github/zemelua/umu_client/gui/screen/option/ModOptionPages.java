@@ -14,6 +14,8 @@ public class ModOptionPages {
 	public static final ImmutableList<Page> VIDEO = ImmutableList.<Page>builder()
 			.add(new Page.Builder()
 					.add(new Group.Builder()
+							.add(VanillaOptions.GRAPHICS).build()
+					).add(new Group.Builder()
 							.add(VanillaOptions.FRAMERATE_LIMIT)
 							.add(VanillaOptions.VSYNC_ENABLE).build()
 					).add(new Group.Builder()
