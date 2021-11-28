@@ -1,8 +1,8 @@
 {
 	"umu_client.screen.options.page.general": "General",
 	"umu_client.screen.options.page.world": "World",
+	"umu_client.screen.options.page.gui": "GUI",
 	"umu_client.screen.options.page.dynamic_light": "Dynamic Light",
-	"umu_client.screen.options.page.visual": "Visual",
 
 	"umu_client.screen.options.button.apply": "Apply",
 	"umu_client.screen.options.button.undo": "Undo",

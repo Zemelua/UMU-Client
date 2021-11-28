@@ -3,7 +3,7 @@ package io.github.zemelua.umu_client.gui.screen.option;
 import com.google.common.collect.ImmutableList;
 import io.github.zemelua.umu_client.option.IOption;
 import io.github.zemelua.umu_client.option.ModOptions;
-import io.github.zemelua.umu_client.option.VanillaOptions;
+import io.github.zemelua.umu_client.option.vanilla.VanillaOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 
@@ -20,30 +20,37 @@ public class ModOptionPages {
 							.add(VanillaOptions.VSYNC_ENABLE).build()
 					).add(new Group.Builder()
 							.add(VanillaOptions.FULLSCREEN_ENABLE).build()
+					).add(new Group.Builder()
+							.add(ModOptions.THEME_COLOR).build()
 					).build("general")
 			).add(new Page.Builder()
 					.add(new Group.Builder()
 							.add(VanillaOptions.RENDER_DISTANCE).build()
 					).add(new Group.Builder()
-							.add(VanillaOptions.GAMMA).build()
+							.add(VanillaOptions.GAMMA)
+							.add(VanillaOptions.AMBIENT_OCCLUSION).build()
 					).add(new Group.Builder()
 							.add(VanillaOptions.MIPMAP_LEVELS).build()
 					).add(new Group.Builder()
 							.add(VanillaOptions.ENTITY_SHADOWS)
 							.add(VanillaOptions.ENTITY_DISTANCE_SCALING).build()
 					).add(new Group.Builder()
+							.add(VanillaOptions.PARTICLES).build()
+					).add(new Group.Builder()
 							.add(VanillaOptions.FOV_EFFECTS_SCALE)
 							.add(VanillaOptions.SCREEN_EFFECTS_SCALE).build()
 					).build("world")
 			).add(new Page.Builder()
 					.add(new Group.Builder()
+							.add(VanillaOptions.GUI_SCALE)
+							.add(VanillaOptions.ATTACK_INDICATOR)
+							.add(VanillaOptions.VIEW_BOBBING).build()
+					).build("gui")
+			).add(new Page.Builder()
+					.add(new Group.Builder()
 							.add(ModOptions.DYNAMIC_LIGHT)
 							.add(ModOptions.DYNAMIC_LIGHT_BRIGHTNESS).build()
 					).build("dynamic_light")
-			).add(new Page.Builder()
-					.add(new Group.Builder()
-							.add(ModOptions.THEME_COLOR).build()
-					).build("visual")
 			).build();
 
 	public static class Group {

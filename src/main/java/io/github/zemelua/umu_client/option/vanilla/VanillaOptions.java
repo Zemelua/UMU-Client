@@ -1,12 +1,7 @@
-package io.github.zemelua.umu_client.option;
+package io.github.zemelua.umu_client.option.vanilla;
 
 import io.github.zemelua.umu_client.UMUClient;
-import io.github.zemelua.umu_client.option.vanilla.EnumerationVanillaOption;
-import io.github.zemelua.umu_client.option.vanilla.RangeVanillaOption;
-import io.github.zemelua.umu_client.option.vanilla.SwitchVanillaOption;
-import net.minecraft.client.GraphicsStatus;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.Option;
+import net.minecraft.client.*;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -17,7 +12,6 @@ public final class VanillaOptions {
 			(options, value) -> options.graphicsMode = value, new TranslatableComponent("options.graphics"),
 			UMUClient.component("option.video.graphics.description"), value -> new TranslatableComponent(value.getKey())
 	);
-
 	public static final RangeVanillaOption FRAMERATE_LIMIT = new RangeVanillaOption(
 			120D, Option.FRAMERATE_LIMIT,
 			new TranslatableComponent("options.framerateLimit"),
@@ -46,6 +40,20 @@ public final class VanillaOptions {
 			new TranslatableComponent("options.fullscreen"),
 			UMUClient.component("option.video.fullscreen_enable.description")
 	);
+	public static final RangeVanillaOption GUI_SCALE = new RangeVanillaOption(
+			(double) Minecraft.getInstance().getWindow().calculateScale(0, Minecraft.getInstance().isEnforceUnicode()),
+			0D, (double) Minecraft.getInstance().getWindow().calculateScale(0, Minecraft.getInstance().isEnforceUnicode()),
+			options -> (double) options.guiScale, (options, value) -> options.guiScale = value.intValue(),
+			new TranslatableComponent("options.guiScale"),
+			UMUClient.component("option.video.gui_scale.description"),
+			(value, options, small) -> {
+				if (small) return new TextComponent(String.valueOf(value.intValue()));
+
+				return value.intValue() == 0
+						? new TranslatableComponent("options.guiScale.auto")
+						: new TextComponent(Integer.toString(value.intValue()));
+			}
+	);
 
 	public static final RangeVanillaOption RENDER_DISTANCE = new RangeVanillaOption(
 			Minecraft.getInstance().is64Bit() ? 12D : 8D, Option.RENDER_DISTANCE,
@@ -69,6 +77,11 @@ public final class VanillaOptions {
 					return new TranslatableComponent("umu_client.screen.options.unit.percent_add_value", valueInt);
 				}
 			}
+	);
+	public static final EnumerationVanillaOption<AmbientOcclusionStatus> AMBIENT_OCCLUSION = new EnumerationVanillaOption<>(
+			AmbientOcclusionStatus.values(), AmbientOcclusionStatus.MAX, options -> options.ambientOcclusion,
+			(options, value) -> options.ambientOcclusion = value, new TranslatableComponent("options.ao"),
+			UMUClient.component("option.video.ambient_occlusion.description"), value -> new TranslatableComponent(value.getKey())
 	);
 	public static final RangeVanillaOption MIPMAP_LEVELS = new RangeVanillaOption(
 			4D, Option.MIPMAP_LEVELS,
@@ -95,6 +108,16 @@ public final class VanillaOptions {
 						: new TranslatableComponent("umu_client.screen.options.unit.percent_value", valueInt);
 			}
 	);
+	public static final EnumerationVanillaOption<ParticleStatus> PARTICLES = new EnumerationVanillaOption<>(
+			ParticleStatus.values(), ParticleStatus.ALL, options -> options.particles,
+			(options, value) -> options.particles = value, new TranslatableComponent("options.particles"),
+			UMUClient.component("option.video.particles.description"), value -> new TranslatableComponent(value.getKey())
+	);
+	public static final EnumerationVanillaOption<AttackIndicatorStatus> ATTACK_INDICATOR = new EnumerationVanillaOption<>(
+			AttackIndicatorStatus.values(), AttackIndicatorStatus.CROSSHAIR, options -> options.attackIndicator,
+			(options, value) -> options.attackIndicator = value, new TranslatableComponent("options.attackIndicator"),
+			UMUClient.component("option.video.attack_indicator.description"), value -> new TranslatableComponent(value.getKey())
+	);
 	public static final RangeVanillaOption FOV_EFFECTS_SCALE = new RangeVanillaOption(
 			1.0D, Option.FOV_EFFECTS_SCALE,
 			new TranslatableComponent("options.fovEffectScale"),
@@ -120,5 +143,11 @@ public final class VanillaOptions {
 						? CommonComponents.OPTION_OFF
 						: new TranslatableComponent("umu_client.screen.options.unit.percent_value", valueInt);
 			}
+	);
+
+	public static final SwitchVanillaOption VIEW_BOBBING = new SwitchVanillaOption(
+			true, options -> options.bobView, (options, value) -> options.bobView = value,
+			new TranslatableComponent("options.viewBobbing"),
+			UMUClient.component("option.video.view_bobbing.description")
 	);
 }
