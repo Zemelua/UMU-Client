@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class ModOptionsSubScreen extends Screen {
-	private final Screen root;
+	@Nullable private final Screen root;
 	private final ImmutableList<ModOptionPages.Page> pages;
 
 	private final List<OptionWidget<?, ?>> optionWidgets = new ArrayList<>();
 
 	private int currentPage;
 
-	protected ModOptionsSubScreen(Screen root, ImmutableList<ModOptionPages.Page> pages) {
+	protected ModOptionsSubScreen(@Nullable Screen root, ImmutableList<ModOptionPages.Page> pages) {
 		super(new TextComponent("UMU Client Options"));
 
 		this.root = root;
@@ -167,7 +167,11 @@ public class ModOptionsSubScreen extends Screen {
 		this.minecraft.setScreen(this.root);
 	}
 
-	public static ModOptionsSubScreen videoOptionsScreen(Screen root) {
+	public static ModOptionsSubScreen videoOptionsScreen(@Nullable Screen root) {
 		return new ModOptionsSubScreen(root, ModOptionPages.VIDEO);
+	}
+
+	public static ModOptionsSubScreen soundOptionsScreen(@Nullable Screen root) {
+		return new ModOptionsSubScreen(root, ModOptionPages.SOUND);
 	}
 }

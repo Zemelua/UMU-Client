@@ -42,7 +42,6 @@ public class ModOptionPages {
 					).build("world")
 			).add(new Page.Builder()
 					.add(new Group.Builder()
-							.add(VanillaOptions.GUI_SCALE)
 							.add(VanillaOptions.ATTACK_INDICATOR)
 							.add(VanillaOptions.VIEW_BOBBING).build()
 					).build("gui")
@@ -51,6 +50,18 @@ public class ModOptionPages {
 							.add(ModOptions.DYNAMIC_LIGHT)
 							.add(ModOptions.DYNAMIC_LIGHT_BRIGHTNESS).build()
 					).build("dynamic_light")
+			).build();
+
+	public static final ImmutableList<Page> SOUND = ImmutableList.<Page>builder()
+			.add(new Page.Builder()
+					.add(new Group.Builder()
+							.add(VanillaOptions.MASTER_VOLUME)
+							.add(VanillaOptions.BLOCK_VOLUME).build()
+					).add(new Group.Builder()
+							.add(ModOptions.BLOCK_PLACE_VOLUME)
+							.add(ModOptions.BLOCK_BREAK_VOLUME)
+							.add(ModOptions.BLOCK_AMBIENT_VOLUME).build()
+					).build("general")
 			).build();
 
 	public static class Group {

@@ -1,6 +1,6 @@
 package io.github.zemelua.umu_client;
 
-import io.github.zemelua.umu_client.gui.screen.ModScreenManager;
+import io.github.zemelua.umu_client.gui.screen.ScreenManager;
 import io.github.zemelua.umu_client.renderer.world.DynamicLightRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -50,7 +50,7 @@ public interface IClientHandler {
 		public void onGuiOpen(final GuiOpenEvent event) {
 			if (event.getGui() == null) return;
 
-			Optional<Screen> screen = ModScreenManager.createReplaceScreen(event.getGui());
+			Optional<Screen> screen = ScreenManager.createReplaceScreen(event.getGui());
 			screen.ifPresent(event::setGui);
 		}
 	}

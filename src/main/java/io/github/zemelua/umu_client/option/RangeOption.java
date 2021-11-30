@@ -1,10 +1,12 @@
 package io.github.zemelua.umu_client.option;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import io.github.zemelua.umu_client.UMUClient;
 import io.github.zemelua.umu_client.config.ClientConfig;
 import io.github.zemelua.umu_client.gui.screen.widget.OptionWidget;
 import io.github.zemelua.umu_client.util.Rect2i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
@@ -13,15 +15,17 @@ import java.util.function.Function;
 public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOption<Integer> {
 	private final Integer minValue;
 	private final Integer maxValue;
+	private final Integer interval;
 	private final Widget.IValueFormatter<Integer, RangeOption> valueFormatter;
 
-	public RangeOption(Integer defaultValue, Integer minValue, Integer maxValue,
+	public RangeOption(Integer defaultValue, Integer minValue, Integer maxValue, Integer interval,
 					   Function<ClientConfig, ConfigValue<Integer>> cache, Component name, Component description,
 					   Widget.IValueFormatter<Integer, RangeOption> valueFormatter) {
 		super(defaultValue, cache, name, description);
 
 		this.minValue = minValue;
 		this.maxValue = maxValue;
+		this.interval = interval;
 		this.valueFormatter = valueFormatter;
 	}
 
@@ -41,12 +45,70 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 	}
 
 	@Override
+	public Integer getInterval() {
+		return this.interval;
+	}
+
+	@Override
 	public Component valueFormat(Integer value, boolean small) {
 		return this.valueFormatter.format(value, this, small);
 	}
 
+	public static class Builder {
+		private Integer defaultValue = 0;
+		private Integer minValue = 0;
+		private Integer maxValue = 0;
+		private Integer interval = 0;
+		private Component name = TextComponent.EMPTY;
+		private Component description = TextComponent.EMPTY;
+		private Widget.IValueFormatter<Integer, RangeOption> valueFormatter = (value, options, small) -> new TextComponent(value.toString());
+
+		public Builder defaultValue(Integer defaultValue) {
+			this.defaultValue = defaultValue;
+			return this;
+		}
+
+		public Builder minValue(Integer minValue) {
+			this.minValue = minValue;
+			return this;
+		}
+
+		public Builder maxValue(Integer maxValue) {
+			this.maxValue = maxValue;
+			return this;
+		}
+
+		public Builder interVal(Integer interval) {
+			this.interval = interval;
+			return this;
+		}
+
+		public Builder name(String name) {
+			this.name = UMUClient.component("option." + name);
+			this.description(name);
+			return this;
+		}
+
+		public Builder description(String description) {
+			this.description = UMUClient.component("option." + description + ".description");
+			return this;
+		}
+
+		public Builder valueFormatter(Widget.IValueFormatter<Integer, RangeOption> valueFormatter) {
+			this.valueFormatter = valueFormatter;
+			return this;
+		}
+
+		public RangeOption build(Function<ClientConfig, ConfigValue<Integer>> cache) {
+			return new RangeOption(this.defaultValue, this.minValue, this.maxValue, this.interval, cache,
+					this.name, this.description, this.valueFormatter);
+		}
+	}
+
 	public static class Widget<T extends Number, O extends IOption<T> & IRangeOption<T>> extends OptionWidget<T, O> {
 		private final Function<Double, T> converter;
+
+		private double thumbPos;
 
 		public Widget(Rect2i rect, O option, Function<Double, T> converter) {
 			super(rect, option);
@@ -70,7 +132,7 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 		}
 
 		protected void drawCompact(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-			Component valueText = this.option.valueFormat(this.modifiableValue, !this.hovered);
+			Component valueText = this.option.valueFormat(this.modifiableValue, this.getSliderSize() > 0);
 			int drawX = this.rect.getLimitX() - 6 - this.font.width(valueText) - this.getSliderSize()
 					- this.getSliderSize() / 90 * 4;
 			int drawY = this.rect.getMiddleY() - 4;
@@ -89,8 +151,10 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 		}
 
 		protected void drawThumb(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-			int thumbStartX = (int) (this.rect.getX() + this.rect.getWidth() - this.getSliderSize() - 6
-					+ this.getThumbPos() * this.getSliderSize());
+			double thumbOffset = Mth.clamp((this.modifiableValue.doubleValue() - this.option.getMin().doubleValue())
+					/ (this.option.getMax().doubleValue() - this.option.getMin().doubleValue()) * this.getSliderSize(),
+					0, this.getSliderSize());
+			int thumbStartX = (int) (this.rect.getLimitX() - 6 - this.getSliderSize() + thumbOffset);
 			int thumbStartY = this.rect.getY() + this.rect.getHeight() / 2 - 5;
 			int thumbEndX = thumbStartX + 2;
 			int thumbEndY = thumbStartY + 10;
@@ -128,13 +192,21 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 
 		private void setValue(double newValue) {
 			double valuePercent = Mth.clamp(newValue, 0.0D, 1.0D);
+			double interval = this.option.getInterval().doubleValue();
+			double value = this.option.getMin().doubleValue()
+					+ valuePercent * (this.option.getMax().doubleValue() - this.option.getMin().doubleValue());
 
-			this.modifiableValue = this.converter.apply(this.option.getMin().doubleValue() + valuePercent
-					* (this.option.getMax().doubleValue() - this.option.getMin().doubleValue()));
+			double valueRounded = Math.round(value / interval) * interval;
+
+			this.modifiableValue = this.converter.apply(valueRounded);
 		}
 
 		private double getThumbPos() {
-			return (this.modifiableValue.doubleValue() - this.option.getMin().doubleValue())
+			double value = Mth.clamp(this.modifiableValue.doubleValue(),
+					this.option.getMin().doubleValue(), this.option.getMax().doubleValue());
+			double interval = this.option.getInterval().doubleValue();
+
+			return Math.ceil(value / interval) * interval
 					/ (this.option.getMax().doubleValue() - this.option.getMin().doubleValue());
 		}
 
