@@ -17,9 +17,10 @@ public class BlockLightEngineMixin {
 	private void getLightEmission(long pos, CallbackInfoReturnable<Integer> lightCallback) {
 		Player player = Minecraft.getInstance().player;
 		DynamicLightRenderer dynamicLightRenderer = UMUClient.CLIENT_HANDLER.getDynamicLightRenderer();
+		int brightness = dynamicLightRenderer.getBrightness(BlockPos.of(pos));
 
-		if (player != null && player.blockPosition().equals(BlockPos.of(pos))) {
-			lightCallback.setReturnValue(14);
+		if (player != null && brightness > 0) {
+			lightCallback.setReturnValue(brightness);
 		}
 	}
 }
