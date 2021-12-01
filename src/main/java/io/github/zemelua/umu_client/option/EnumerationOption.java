@@ -1,22 +1,26 @@
 package io.github.zemelua.umu_client.option;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import io.github.zemelua.umu_client.UMUClient;
 import io.github.zemelua.umu_client.config.ClientConfig;
 import io.github.zemelua.umu_client.gui.screen.widget.OptionWidget;
 import io.github.zemelua.umu_client.option.enums.IHasComponent;
 import io.github.zemelua.umu_client.util.Rect2i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
+import javax.annotation.Nullable;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 
-public class EnumerationOption<T extends IHasComponent> extends IOption.BaseOption<T> implements IEnumerationOption<T> {
+public class EnumerationOption<T extends Enum<T> & IHasComponent> extends IOption.BaseOption<T> implements IEnumerationOption<T> {
 	private final T[] values;
 
 	public EnumerationOption(T[] values, T defaultValue, Function<ClientConfig, ConfigValue<T>> cache,
-							 Component name, Component description) {
-		super(defaultValue, cache, name, description);
+							 Component name, Component description, BooleanSupplier isEnable) {
+		super(defaultValue, cache, name, description, isEnable);
 		this.values = values;
 	}
 
@@ -33,6 +37,47 @@ public class EnumerationOption<T extends IHasComponent> extends IOption.BaseOpti
 	@Override
 	public Component valueFormat(T value, boolean small) {
 		return value.getComponent();
+	}
+
+	public static class Builder<T extends Enum<T> & IHasComponent> {
+		@Nullable private T[] values = null;
+		@Nullable private T defaultValue = null;
+		private Component name = TextComponent.EMPTY;
+		private Component description = TextComponent.EMPTY;
+		private BooleanSupplier isEnable = () -> true;
+
+		public Builder<T> values(T[] values) {
+			this.values = values;
+			return this;
+		}
+
+		public Builder<T> defaultValue(T defaultValue) {
+			this.defaultValue = defaultValue;
+			return this;
+		}
+
+		public Builder<T> name(String name) {
+			this.name = UMUClient.component("option." + name);
+			this.description(name);
+			return this;
+		}
+
+		public Builder<T> description(String description) {
+			this.description = UMUClient.component("option." + description + ".description");
+			return this;
+		}
+
+		public Builder<T> isEnable(BooleanSupplier isEnable) {
+			this.isEnable = isEnable;
+			return this;
+		}
+
+		public EnumerationOption<T> build(Function<ClientConfig, ConfigValue<T>> cache) {
+			if (this.values == null) throw new IllegalStateException("Values must not be null!");
+			if (this.defaultValue == null) throw new IllegalStateException("DefaultValue must not be null!");
+
+			return new EnumerationOption<T>(this.values, this.defaultValue, cache, this.name, this.description, this.isEnable);
+		}
 	}
 
 	public static class Widget<T, O extends IOption<T> & IEnumerationOption<T>> extends OptionWidget<T, O> {

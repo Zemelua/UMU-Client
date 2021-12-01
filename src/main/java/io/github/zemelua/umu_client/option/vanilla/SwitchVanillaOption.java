@@ -20,4 +20,9 @@ public class SwitchVanillaOption extends BaseVanillaOption<Boolean> {
 	public OptionWidget<Boolean, ? extends IOption<Boolean>> createWidget(Rect2i rect) {
 		return new SwitchOption.Widget(rect, this);
 	}
+
+	@Override
+	public boolean isEnable() {
+		return true;
+	}
 }

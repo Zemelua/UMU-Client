@@ -28,7 +28,7 @@ public abstract class OptionWidget<T, O extends IOption<T>> extends BaseWidget {
 
 		int drawX = this.rect.getX() + 6;
 		int drawY = this.rect.getY() + this.rect.getHeight() / 2 - 4;
-		int labelColor = this.enabled ? this.getLabelColor() : 0x90FFFFFF;
+		int labelColor = this.getLabelColor();
 
 		this.drawText(matrixStack, label.getString(), drawX, drawY, labelColor);
 		this.drawValue(matrixStack, mouseX, mouseY, partialTicks);
@@ -39,12 +39,15 @@ public abstract class OptionWidget<T, O extends IOption<T>> extends BaseWidget {
 	protected abstract int getValueWidth();
 
 	protected int getValueColor() {
-		return 0xFFFFFFFF;
+		return this.isEnabled() ? 0xFFFFFFFF : 0x90FFFFFF;
 	}
 
 	protected int getLabelColor() {
-		return this.isChanged() ? ModOptions.THEME_COLOR.getColor() : 0xFFFFFFFF;
+		return this.isEnabled()
+				? (this.isChanged() ? ModOptions.THEME_COLOR.getColor() : 0xFFFFFFFF)
+				: 0x90FFFFFF;
 	}
+
 
 	public void load() {
 		this.modifiableValue = this.option.getValue();
@@ -61,5 +64,10 @@ public abstract class OptionWidget<T, O extends IOption<T>> extends BaseWidget {
 
 	public boolean isChanged() {
 		return !this.modifiableValue.equals(this.option.getValue());
+	}
+
+	@Override
+	protected boolean isEnabled() {
+		return this.option.isEnable();
 	}
 }

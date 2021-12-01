@@ -1,6 +1,7 @@
 package io.github.zemelua.umu_client.renderer.world;
 
 import com.google.common.collect.ImmutableMap;
+import io.github.zemelua.umu_client.option.ModOptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -78,13 +79,14 @@ public class DynamicLightRenderer {
 
 	private int getBrightness(Entity entity) {
 		int brightness = 0;
+		if (ModOptions.DYNAMIC_LIGHT_MODE.getValue().renderOnlySelf() && this.minecraft.player != entity) return brightness;
 
 		if (entity instanceof LivingEntity entityLiving) {
 			for (InteractionHand hand : InteractionHand.values()) {
 				brightness += this.getBrightness(entityLiving.getItemInHand(hand));
 			}
 
-			if (entityLiving.getType() == EntityType.GLOW_SQUID) {
+			if (ModOptions.DYNAMIC_LIGHT_MODE.getValue().renderEntities() && entityLiving.getType() == EntityType.GLOW_SQUID) {
 				brightness += 5;
 			}
 		} else if (entity instanceof ItemEntity entityItem) {

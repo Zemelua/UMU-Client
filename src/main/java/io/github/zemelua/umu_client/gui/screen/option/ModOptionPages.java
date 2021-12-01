@@ -47,8 +47,10 @@ public class ModOptionPages {
 					).build("gui")
 			).add(new Page.Builder()
 					.add(new Group.Builder()
-							.add(ModOptions.DYNAMIC_LIGHT)
-							.add(ModOptions.DYNAMIC_LIGHT_BRIGHTNESS).build()
+							.add(ModOptions.DYNAMIC_LIGHT_ENABLE).build()
+					).add(new Group.Builder()
+							.add(ModOptions.DYNAMIC_LIGHT_MODE)
+							.add(ModOptions.DYNAMIC_LIGHT_RENDER_DISTANCE).build()
 					).build("dynamic_light")
 			).build();
 

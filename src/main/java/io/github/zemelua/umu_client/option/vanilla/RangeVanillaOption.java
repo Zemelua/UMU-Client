@@ -49,6 +49,11 @@ public class RangeVanillaOption extends BaseVanillaOption<Double> implements IRa
 	}
 
 	@Override
+	public boolean isEnable() {
+		return true;
+	}
+
+	@Override
 	public Double getMax() {
 		return this.maxValue;
 	}

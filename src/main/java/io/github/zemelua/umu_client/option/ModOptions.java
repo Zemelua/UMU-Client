@@ -2,6 +2,7 @@ package io.github.zemelua.umu_client.option;
 
 import io.github.zemelua.umu_client.UMUClient;
 import io.github.zemelua.umu_client.config.ClientConfig;
+import io.github.zemelua.umu_client.option.enums.DynamicLightMode;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -11,18 +12,25 @@ import java.awt.*;
 import java.util.function.Function;
 
 public final class ModOptions {
-	public static final SwitchOption DYNAMIC_LIGHT = new SwitchOption(
-			true, ClientConfig::getDynamicLightEnable,
-			UMUClient.component("option.video.dynamic_light_enable"),
-			UMUClient.component("option.video.dynamic_light_enable.description")
-	);
-	public static final RangeOption DYNAMIC_LIGHT_BRIGHTNESS = new RangeOption(
-			15, 1, 15, 1, ClientConfig::getDynamicLightBrightness,
-			UMUClient.component("option.video.dynamic_light_brightness"),
-			UMUClient.component("option.video.dynamic_light_brightness.description"),
-			(value, options, small) -> new TextComponent(value.toString())
-	);
-
+	public static final SwitchOption DYNAMIC_LIGHT_ENABLE = new SwitchOption.Builder()
+			.defaultValue(true)
+			.name("video.dynamic_light_enable")
+			.build(ClientConfig::getDynamicLightEnable);
+	public static final EnumerationOption<DynamicLightMode> DYNAMIC_LIGHT_MODE = new EnumerationOption.Builder<DynamicLightMode>()
+			.values(DynamicLightMode.values())
+			.defaultValue(DynamicLightMode.ALL_ITEMS)
+			.name("video.dynamic_light_mode")
+			.isEnable(DYNAMIC_LIGHT_ENABLE::getValue)
+			.build(ClientConfig::getDynamicLightMode);
+	public static final RangeOption DYNAMIC_LIGHT_RENDER_DISTANCE = new RangeOption.Builder()
+			.defaultValue(128)
+			.minValue(1)
+			.maxValue(128)
+			.interVal(1)
+			.name("video.dynamic_light_render_distance")
+			.valueFormatter((value, options, small) -> new TextComponent(value.toString()))
+			.isEnable(() -> DYNAMIC_LIGHT_ENABLE.getValue() && DYNAMIC_LIGHT_MODE.getValue().renderNotOnlySelf())
+			.build(ClientConfig::getDynamicLightRenderDistance);
 	public static final ColorOption THEME_COLOR = new ColorOption(
 			118, value -> Color.HSBtoRGB((float) value / 255.0F, 0.35F, 0.89F), ClientConfig::getThemeColor,
 			UMUClient.component("option.video.theme_color"),

@@ -15,7 +15,7 @@ public class ColorOption extends RangeOption {
 
 	public ColorOption(Integer defaultValue, Function<Integer, Integer> colorGetter,
 					   Function<ClientConfig, ConfigValue<Integer>> cache, Component name, Component description) {
-		super(defaultValue, 0, 255, 1, cache, name, description, (value, options, small) -> TextComponent.EMPTY);
+		super(defaultValue, 0, 255, 1, cache, name, description, (value, options, small) -> TextComponent.EMPTY, () -> true);
 
 		this.colorGetter = colorGetter;
 	}

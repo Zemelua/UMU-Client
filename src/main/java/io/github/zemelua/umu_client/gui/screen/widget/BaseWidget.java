@@ -47,7 +47,7 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 
 	@Override
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		this.hovered = this.rect.contains(mouseX, mouseY);
+		this.hovered = this.isEnabled() && this.rect.contains(mouseX, mouseY);
 
 		if (this.hovered) {
 			this.touchedTick += partialTicks;
@@ -74,7 +74,7 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 	}
 
 	protected void drawLabel(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		int labelColor = this.enabled ? 0xFFFFFFFF : 0x90FFFFFF;
+		int labelColor = this.isEnabled() ? 0xFFFFFFFF : 0x90FFFFFF;
 		int centerX = this.rect.getX() + this.rect.getWidth() / 2;
 		int centerY = this.rect.getY() + this.rect.getHeight() / 2;
 
@@ -125,6 +125,10 @@ public abstract class BaseWidget implements Widget, NarratableEntry, GuiEventLis
 	}
 
 	protected int getBackgroundColor() {
-		return this.enabled ? (hovered ? BACKGROUND_HOVERED_COLOR : BACKGROUND_BASE_COLOR) : BACKGROUND_DISABLED_COLOR;
+		return this.isEnabled() ? (hovered ? BACKGROUND_HOVERED_COLOR : BACKGROUND_BASE_COLOR) : BACKGROUND_DISABLED_COLOR;
+	}
+
+	protected boolean isEnabled() {
+		return true;
 	}
 }

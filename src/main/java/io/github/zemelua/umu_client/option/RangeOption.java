@@ -10,6 +10,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 
 public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOption<Integer> {
@@ -20,8 +21,8 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 
 	public RangeOption(Integer defaultValue, Integer minValue, Integer maxValue, Integer interval,
 					   Function<ClientConfig, ConfigValue<Integer>> cache, Component name, Component description,
-					   Widget.IValueFormatter<Integer, RangeOption> valueFormatter) {
-		super(defaultValue, cache, name, description);
+					   Widget.IValueFormatter<Integer, RangeOption> valueFormatter, BooleanSupplier isEnable) {
+		super(defaultValue, cache, name, description, isEnable);
 
 		this.minValue = minValue;
 		this.maxValue = maxValue;
@@ -62,6 +63,7 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 		private Component name = TextComponent.EMPTY;
 		private Component description = TextComponent.EMPTY;
 		private Widget.IValueFormatter<Integer, RangeOption> valueFormatter = (value, options, small) -> new TextComponent(value.toString());
+		private BooleanSupplier isEnable = () -> true;
 
 		public Builder defaultValue(Integer defaultValue) {
 			this.defaultValue = defaultValue;
@@ -99,9 +101,14 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 			return this;
 		}
 
+		public Builder isEnable(BooleanSupplier isEnable) {
+			this.isEnable = isEnable;
+			return this;
+		}
+
 		public RangeOption build(Function<ClientConfig, ConfigValue<Integer>> cache) {
 			return new RangeOption(this.defaultValue, this.minValue, this.maxValue, this.interval, cache,
-					this.name, this.description, this.valueFormatter);
+					this.name, this.description, this.valueFormatter, this.isEnable);
 		}
 	}
 
@@ -137,7 +144,7 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 					- this.getSliderSize() / 90 * 4;
 			int drawY = this.rect.getMiddleY() - 4;
 
-			this.drawText(matrixStack, valueText, drawX, drawY, 0xFFFFFFFF);
+			this.drawText(matrixStack, valueText, drawX, drawY, this.getValueColor());
 		}
 
 		protected void drawSlider(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
@@ -145,7 +152,7 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 			int startY = this.rect.getY() + this.rect.getHeight() / 2;
 			int endX = startX + this.getSliderSize();
 			int endY = startY + 1;
-			int color = 0xFFFFFFFF;
+			int color = this.getValueColor();
 
 			this.drawRect(matrixStack, startX, startY, endX, endY, color);
 		}
@@ -158,7 +165,7 @@ public class RangeOption extends IOption.BaseOption<Integer> implements IRangeOp
 			int thumbStartY = this.rect.getY() + this.rect.getHeight() / 2 - 5;
 			int thumbEndX = thumbStartX + 2;
 			int thumbEndY = thumbStartY + 10;
-			int color = 0xFFFFFFFF;
+			int color = this.getValueColor();
 
 			this.drawRect(matrixStack, thumbStartX, thumbStartY, thumbEndX, thumbEndY, color);
 		}

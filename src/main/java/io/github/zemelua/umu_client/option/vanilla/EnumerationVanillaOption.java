@@ -34,6 +34,11 @@ public class EnumerationVanillaOption<T> extends BaseVanillaOption<T> implements
 	}
 
 	@Override
+	public boolean isEnable() {
+		return true;
+	}
+
+	@Override
 	public T[] getValues() {
 		return this.values;
 	}

@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 
 public interface IOption<T> {
@@ -29,17 +30,22 @@ public interface IOption<T> {
 		return new TextComponent(value.toString());
 	}
 
+	boolean isEnable();
+
 	abstract class BaseOption<T> implements IOption<T> {
 		protected final T defaultValue;
 		private final Function<ClientConfig, ConfigValue<T>> cache;
 		private final Component name;
 		private final Component description;
+		private final BooleanSupplier isEnable;
 
-		public BaseOption(T defaultValue, Function<ClientConfig, ConfigValue<T>> cache, Component name, Component description) {
+		public BaseOption(T defaultValue, Function<ClientConfig, ConfigValue<T>> cache, Component name, Component description,
+						  BooleanSupplier isEnable) {
 			this.defaultValue = defaultValue;
 			this.cache = cache;
 			this.name = name;
 			this.description = description;
+			this.isEnable = isEnable;
 		}
 
 		@Override
@@ -71,6 +77,11 @@ public interface IOption<T> {
 		@Override
 		public T getDefaultValue() {
 			return this.defaultValue;
+		}
+
+		@Override
+		public boolean isEnable() {
+			return this.isEnable.getAsBoolean();
 		}
 	}
 }
