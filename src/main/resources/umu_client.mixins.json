@@ -2,13 +2,11 @@
 	"required": true,
 	"minVersion": "0.8",
 	"package": "io.github.zemelua.umu_client.mixin",
-	"compatibilityLevel": "JAVA_16",
+	"compatibilityLevel": "JAVA_8",
 	"refmap": "umu_client.refmap.json",
 	"mixins": [
 	],
 	"client": [
-		"BlockLightEngineMixin",
-		"MixinClientLevel"
 	],
 	"injectors": {
 		"defaultRequire": 1
