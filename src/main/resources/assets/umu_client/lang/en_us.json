@@ -1,0 +1,31 @@
+{
+	"umu_client.screen.options.page.video.general": "General",
+	"umu_client.screen.options.page.video.world": "World",
+	"umu_client.screen.options.page.video.gui": "GUI",
+	"umu_client.screen.options.page.video.dynamic_light": "Dynamic Light",
+
+	"umu_client.screen.options.button.apply": "Apply",
+	"umu_client.screen.options.button.undo": "Undo",
+	"umu_client.screen.options.button.reset": "Reset",
+
+	"umu_client.screen.options.unit.percent": "%s%%",
+	"umu_client.screen.options.unit.percent_add": "+%s%%",
+	"umu_client.screen.options.unit.pixel": "%spx",
+	"umu_client.screen.options.unit.second": "%s seconds",
+	"umu_client.screen.options.unit.fps": "%s fps",
+	"umu_client.screen.options.unit.chunk": "%s chunks",
+
+	"umu_client.option.video.enable_dynamic_light": "Enable Dynamic Light",
+	"umu_client.option.video.enable_dynamic_light.description": "",
+	"umu_client.option.video.dynamic_light_mode": "Dynamic Light Mode",
+	"umu_client.option.video.dynamic_light_mode.value.only_self": "Only Self",
+	"umu_client.option.video.dynamic_light_mode.value.all": "All",
+	"umu_client.option.video.dynamic_light_mode.description": "",
+	"umu_client.option.video.theme_color": "Theme Color",
+
+	"umu_client.option.sound.master_volume": "Master",
+	"umu_client.option.sound.block_volume": "Block Base Volume",
+	"umu_client.option.sound.block_place_volume": "Block Place Volume",
+	"umu_client.option.sound.block_break_volume": "Block Break Volume",
+	"umu_client.option.sound.block_ambient_volume": "Block Ambient Volume"
+}
