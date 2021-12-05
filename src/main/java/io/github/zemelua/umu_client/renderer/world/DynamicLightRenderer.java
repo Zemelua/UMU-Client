@@ -1,4 +1,4 @@
-package io.github.zemelua.umu_client.renderer.dynamic_light;
+package io.github.zemelua.umu_client.renderer.world;
 
 import com.google.common.collect.ImmutableMap;
 import io.github.zemelua.umu_client.option.ModOptions;
@@ -15,14 +15,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.event.TickEvent;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DynamicLightRenderer {
-	public static final DynamicLightRenderer INSTANCE = new DynamicLightRenderer(Minecraft.getInstance());
-
 	private static final ImmutableMap<Item, Integer> ITEM_BRIGHTNESSES = ImmutableMap.<Item, Integer>builder()
 			.put(Items.TORCH, 14)
 			.put(Items.LANTERN, 15)
@@ -58,6 +57,12 @@ public class DynamicLightRenderer {
 
 	public DynamicLightRenderer(Minecraft minecraft) {
 		this.minecraft = minecraft;
+	}
+
+	public void onClientTick(final TickEvent.ClientTickEvent event) {
+		if (event.phase == TickEvent.Phase.END) {
+			this.updateLights();
+		}
 	}
 
 	public void updateLights() {

@@ -1,16 +1,17 @@
 package io.github.zemelua.umu_client;
 
 import io.github.zemelua.umu_client.gui.screen.ScreenManager;
-import io.github.zemelua.umu_client.renderer.dynamic_light.DynamicLightRenderer;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraftforge.client.event.ScreenOpenEvent;
-import net.minecraftforge.event.TickEvent;
+import io.github.zemelua.umu_client.renderer.world.DynamicLightRenderer;
+import io.github.zemelua.umu_client.renderer.world.ViewTiltRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.eventbus.api.IEventBus;
-
-import java.util.Optional;
 
 @SuppressWarnings("ClassCanBeRecord")
 public class ClientHandler {
+	public static final DynamicLightRenderer DYNAMIC_LIGHT_RENDERER = new DynamicLightRenderer(Minecraft.getInstance());
+	public static final ViewTiltRenderer VIEW_TILT_RENDERER = new ViewTiltRenderer(Minecraft.getInstance());
+	public static final ScreenManager SCREEN_MANAGER = new ScreenManager(Minecraft.getInstance());
+
 	private final IEventBus forgeBus;
 	@SuppressWarnings({"FieldCanBeLocal", "unused"})
 	private final IEventBus modBus;
@@ -21,20 +22,8 @@ public class ClientHandler {
 	}
 
 	public void initialize() {
-		this.forgeBus.addListener(this::onClientTick);
-		this.forgeBus.addListener(this::onGuiOpen);
-	}
-
-	private void onClientTick(final TickEvent.ClientTickEvent event) {
-		if (event.phase == TickEvent.Phase.END) {
-			DynamicLightRenderer.INSTANCE.updateLights();
-		}
-	}
-
-	private void onGuiOpen(final ScreenOpenEvent event) {
-		if (event.getScreen() == null) return;
-
-		Optional<Screen> screen = ScreenManager.createReplaceScreen(event.getScreen());
-		screen.ifPresent(event::setScreen);
+		this.forgeBus.addListener(DYNAMIC_LIGHT_RENDERER::onClientTick);
+		this.forgeBus.addListener(VIEW_TILT_RENDERER::onCameraSetup);
+		this.forgeBus.addListener(SCREEN_MANAGER::onScreenOpen);
 	}
 }

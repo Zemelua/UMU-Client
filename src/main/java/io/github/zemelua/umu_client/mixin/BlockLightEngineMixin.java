@@ -1,6 +1,6 @@
 package io.github.zemelua.umu_client.mixin;
 
-import io.github.zemelua.umu_client.renderer.dynamic_light.DynamicLightRenderer;
+import io.github.zemelua.umu_client.ClientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
@@ -15,7 +15,7 @@ public class BlockLightEngineMixin {
 	@Inject(at = @At("RETURN"), method = "getLightEmission(J)I", cancellable = true)
 	private void getLightEmission(long pos, CallbackInfoReturnable<Integer> lightCallback) {
 		Player player = Minecraft.getInstance().player;
-		int brightness = DynamicLightRenderer.INSTANCE.getBrightness(BlockPos.of(pos));
+		int brightness = ClientHandler.DYNAMIC_LIGHT_RENDERER.getBrightness(BlockPos.of(pos));
 
 		if (player != null && brightness > 0) {
 			lightCallback.setReturnValue(brightness);
