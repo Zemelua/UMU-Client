@@ -3,6 +3,7 @@ package io.github.zemelua.umu_client;
 import io.github.zemelua.umu_client.config.ModConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
@@ -20,7 +21,7 @@ import org.apache.logging.log4j.MarkerManager;
 @Mod("umu_client")
 public class UMUClient {
 	public static final String MOD_ID = "umu_client";
-	private static final Logger LOGGER = LogManager.getLogger();
+	public static final Logger LOGGER = LogManager.getLogger();
 	public static final Marker MARKER = MarkerManager.getMarker("UMU_CLIENT");
 
 	public static final ModConfig CONFIG;
@@ -33,6 +34,10 @@ public class UMUClient {
 		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> new ClientHandler(forgeBus, modBus)::initialize);
 
 		ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.CLIENT, CONFIG_SPEC);
+	}
+
+	public static ResourceLocation resource(String name) {
+		return new ResourceLocation(UMUClient.MOD_ID, name);
 	}
 
 	public static Component component(String name, Object... args) {
