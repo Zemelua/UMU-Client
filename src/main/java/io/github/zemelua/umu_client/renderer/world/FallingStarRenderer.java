@@ -13,10 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
 import net.minecraftforge.event.TickEvent;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import javax.annotation.Nullable;
+import java.util.*;
 
 public class FallingStarRenderer {
 	private static final ResourceLocation FALLING_STAR_LOCATION = UMUClient.resource("textures/environment/falling_star.png");
@@ -24,53 +22,72 @@ public class FallingStarRenderer {
 	private final Minecraft minecraft;
 	private final List<FallingStar> fallingStars;
 
+	private Random random;
+	@Nullable private MeteorShower shower;
+
 	public FallingStarRenderer(Minecraft minecraft) {
 		this.minecraft = minecraft;
 		this.fallingStars = new ArrayList<>();
 	}
 
 	public void onClientTick(final TickEvent.ClientTickEvent event) {
+		ClientLevel world = this.minecraft.level;
+		if (world == null) return;
+		long gameTime = world.getGameTime();
+		long dayTime = world.getDayTime();
+		this.random = new Random(gameTime);
+
 		if (event.phase == TickEvent.Phase.END) {
-			this.tryCreateStar();
+			if (world.getStarBrightness(0.0F) <= 0.0F) {
+				if (!this.fallingStars.isEmpty()) this.fallingStars.clear();
+			} else {
+				if (this.random.nextInt(3295) > 3293) {
+					this.createStar();
+				}
+			}
+
+			if (dayTime == 13000 && this.random.nextInt(72) > 70) {
+				this.createShower();
+			}
+
+			if (this.shower != null) {
+				this.shower.tick(dayTime);
+			}
 		}
 	}
 
-	private void tryCreateStar() {
-		ClientLevel world = this.minecraft.level;
-		if (world == null) return;
+	private void createShower() {
+		long startTime = 13000 + this.random.nextLong(8000L) + 1L;
+		long finishTime = Math.min(startTime + (long) (this.random.nextGaussian() * 4200L) + 1000L, 8400L);
+		this.shower = this.new MeteorShower(startTime, finishTime);
+	}
 
-		if (world.getStarBrightness(0.0F) <= 0.0F && !this.fallingStars.isEmpty()) {
-			this.fallingStars.clear();
-			return;
-		}
-
-		long time = world.getGameTime();
-		Random random = new Random(time);
-
-		float x = random.nextFloat() * 2.0F - 1.0F;
-		float y = random.nextFloat() * 2.0F - 1.0F;
-		float z = random.nextFloat() * 2.0F - 1.0F;
+	private void createStar() {
+		float x = this.random.nextFloat() * 2.0F - 1.0F;
+		float y = this.random.nextFloat() * 2.0F - 1.0F;
+		float z = this.random.nextFloat() * 2.0F - 1.0F;
 		double d0 = x * x + y * y + z * z;
 
-		for (int i = 0; i < 30; i++) {
-			if (d0 < 1.0D && d0 > 0.01D && random.nextInt(20) > 0) {
-				d0 = 1.0D / Math.sqrt(d0);
-				x *= d0;
-				y *= d0;
-				z *= d0;
+		if (d0 < 1.0D && d0 > 0.01D) {
+			d0 = 1.0D / Math.sqrt(d0);
+			x *= d0;
+			y *= d0;
+			z *= d0;
 
-				this.fallingStars.add(new FallingStar(x, y, z));
-			}
+			this.fallingStars.add(new FallingStar(x, y, z));
 		}
+
 	}
 
 	public void renderFallingStar(Matrix4f matrix, BufferBuilder builder, float partialTicks) {
 		RenderSystem.setShaderTexture(0, FALLING_STAR_LOCATION);
 		builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+
 		if (!this.fallingStars.isEmpty()) {
-			for (Iterator<FallingStar> iterator = this.fallingStars.listIterator(); iterator.hasNext();) {
+			for (Iterator<FallingStar> iterator = this.fallingStars.listIterator(); iterator.hasNext(); ) {
 				FallingStar star = iterator.next();
 				boolean result = star.draw(matrix, builder, partialTicks);
+
 				if (result) iterator.remove();
 			}
 		}
@@ -92,16 +109,13 @@ public class FallingStarRenderer {
 			this.drawX = drawX;
 			this.drawY = drawY;
 			this.drawZ = drawZ;
-			this.size = 2.4F;
+			this.size = 5.1F;
 		}
 
 		private boolean draw(Matrix4f matrix, BufferBuilder builder, float partialTicks) {
 			this.ticks += partialTicks;
 
 			int phase = (int) (this.ticks * 0.5F) % 12;
-
-			UMUClient.LOGGER.info(this.ticks);
-
 			int phaseU = phase % 4;
 			int phaseV = phase / 4 % 3;
 			float startU = (float) (phaseU) / 4.0F;
@@ -145,6 +159,24 @@ public class FallingStarRenderer {
 			}
 
 			return Math.floor((int) (this.ticks * 0.5F) / 12.0D) > 0;
+		}
+	}
+
+	private class MeteorShower {
+		private final long startTime;
+		private final long finishTime;
+
+		private MeteorShower(long startTime, long finishTime) {
+			this.startTime = startTime;
+			this.finishTime = finishTime;
+		}
+
+		private void tick(long dayTime) {
+			if (dayTime >= startTime && dayTime <= finishTime) {
+				for (int i = 0; i < 17; i++) {
+					FallingStarRenderer.this.createStar();
+				}
+			}
 		}
 	}
 }

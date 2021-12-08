@@ -6,6 +6,7 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import io.github.zemelua.umu_client.ClientHandler;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
@@ -33,7 +34,9 @@ public abstract class LevelRendererMixin {
 
 		matrixStack.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
 
+		FogRenderer.setupNoFog();
 		ClientHandler.FALLING_STAR_RENDERER.renderFallingStar(matrixStack.last().pose(), Tesselator.getInstance().getBuilder(), partialTicks);
+		fogSetup.run();
 
 		matrixStack.popPose();
 		matrixStack.pushPose();
