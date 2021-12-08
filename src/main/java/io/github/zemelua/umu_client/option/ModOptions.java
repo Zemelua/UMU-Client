@@ -15,6 +15,7 @@ import java.util.function.Function;
 public final class ModOptions {
 	public static final SwitchOption ENABLE_DYNAMIC_LIGHT;
 	public static final EnumerationOption<DynamicLightMode> DYNAMIC_LIGHT_MODE;
+	public static final SwitchOption ENABLE_FALLING_STARS;
 	public static final ColorOption THEME_COLOR;
 
 	private static RangeOption percentOption(Function<ModConfig, ForgeConfigSpec.ConfigValue<Integer>> cache, String name) {
@@ -65,6 +66,11 @@ public final class ModOptions {
 				.description("video.dynamic_light_mode")
 				.isEnable(ENABLE_DYNAMIC_LIGHT::getValue)
 				.build(ModConfig::getDynamicLightMode);
+		ENABLE_FALLING_STARS = new SwitchOption.Builder()
+				.defaultValue(true)
+				.name("video.enable_falling_stars")
+				.description("video.enable_falling_stars")
+				.build(ModConfig::getEnableFallingStars);
 		THEME_COLOR = new ColorOption.Builder()
 				.defaultValue(118)
 				.colorGetter(value -> Color.HSBtoRGB((float) value / 255.0F, 0.35F, 0.89F))

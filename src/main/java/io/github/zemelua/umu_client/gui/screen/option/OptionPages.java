@@ -117,7 +117,10 @@ public final class OptionPages {
 						.add(new Group.Builder()
 								.add(VanillaOptions.VIEW_BOBBING).build()
 						).add(new Group.Builder()
-								.add(ModOptions.ENABLE_DYNAMIC_LIGHT).build()
+								.add(ModOptions.ENABLE_DYNAMIC_LIGHT)
+								.add(ModOptions.DYNAMIC_LIGHT_MODE).build()
+						).add(new Group.Builder()
+								.add(ModOptions.ENABLE_FALLING_STARS).build()
 						).build("video.custom")
 				).build();
 		SOUND = ImmutableList.<Page>builder()

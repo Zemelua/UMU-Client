@@ -13,6 +13,7 @@ import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 public class ModConfig {
 	private final BooleanValue enableDynamicLight;
 	private final EnumValue<DynamicLightMode> dynamicLightMode;
+	private final BooleanValue enableFallingStars;
 	private final IntValue themeColor;
 
 	public ModConfig(ForgeConfigSpec.Builder builder) {
@@ -20,6 +21,7 @@ public class ModConfig {
 
 		this.enableDynamicLight = ModConfig.define(builder, ModOptions.ENABLE_DYNAMIC_LIGHT);
 		this.dynamicLightMode = ModConfig.defineEnum(builder, ModOptions.DYNAMIC_LIGHT_MODE);
+		this.enableFallingStars = ModConfig.define(builder, ModOptions.ENABLE_FALLING_STARS);
 		this.themeColor = ModConfig.defineInRange(builder, ModOptions.THEME_COLOR);
 	}
 
@@ -29,6 +31,10 @@ public class ModConfig {
 
 	public EnumValue<DynamicLightMode> getDynamicLightMode() {
 		return this.dynamicLightMode;
+	}
+
+	public BooleanValue getEnableFallingStars() {
+		return this.enableFallingStars;
 	}
 
 	public IntValue getThemeColor() {

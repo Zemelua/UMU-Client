@@ -16,7 +16,7 @@ import net.minecraftforge.event.TickEvent;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class FallingStarRenderer {
+public class FallingStarsRenderer {
 	private static final ResourceLocation FALLING_STAR_LOCATION = UMUClient.resource("textures/environment/falling_star.png");
 
 	private final Minecraft minecraft;
@@ -25,7 +25,7 @@ public class FallingStarRenderer {
 	private Random random;
 	@Nullable private MeteorShower shower;
 
-	public FallingStarRenderer(Minecraft minecraft) {
+	public FallingStarsRenderer(Minecraft minecraft) {
 		this.minecraft = minecraft;
 		this.fallingStars = new ArrayList<>();
 	}
@@ -174,7 +174,7 @@ public class FallingStarRenderer {
 		private void tick(long dayTime) {
 			if (dayTime >= startTime && dayTime <= finishTime) {
 				for (int i = 0; i < 17; i++) {
-					FallingStarRenderer.this.createStar();
+					FallingStarsRenderer.this.createStar();
 				}
 			}
 		}

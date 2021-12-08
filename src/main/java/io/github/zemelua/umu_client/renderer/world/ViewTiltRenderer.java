@@ -1,5 +1,6 @@
 package io.github.zemelua.umu_client.renderer.world;
 
+import io.github.zemelua.umu_client.option.vanilla.VanillaOptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -16,7 +17,7 @@ public class ViewTiltRenderer {
 	public void onCameraSetup(EntityViewRenderEvent.CameraSetup event) {
 		Player player = this.minecraft.player;
 
-		if (player != null && player.isFallFlying()) {
+		if (player != null && player.isFallFlying() && VanillaOptions.VIEW_BOBBING.getValue()) {
 			event.setRoll((float) (this.calculateRoll(player)));
 		}
 	}
