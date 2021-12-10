@@ -29,8 +29,7 @@ public final class ScreenManager {
 		if (original.getClass() == VideoSettingsScreen.class) {
 			return Optional.of(ModOptionsSubScreen.videoOptionsScreen(null));
 		} else if (original.getClass() == SoundOptionsScreen.class) {
-			// return Optional.of(ModOptionsSubScreen.soundOptionsScreen(null));
-			return Optional.empty();
+			return Optional.of(ModOptionsSubScreen.soundOptionsScreen(null));
 		}
 
 		return Optional.empty();

@@ -119,12 +119,12 @@ public class RangeVanillaOption extends BaseVanillaOption<Double> implements IRa
 		}
 
 		public RangeVanillaOption build(SoundSource soundSource) {
-			return new RangeVanillaOption(this.defaultValue, 0.0D, 1.0D, this.interval,
-					options -> (double) options.getSoundSourceVolume(soundSource),
-					(options, value) -> options.setSoundCategoryVolume(soundSource, value.floatValue()),
-					UMUClient.component("option.sound." + soundSource.getName() + "_volume"),
-					UMUClient.component("option.sound." + soundSource.getName() + "_volume.description"),
-					this.valueFormatter);
+			return this.minValue(0.0D)
+					.maxValue(1.0D)
+					.name("soundCategory." + soundSource.getName())
+					.description("sound." + soundSource.getName() + "_volume")
+					.build(options -> (double) options.getSoundSourceVolume(soundSource),
+							(options, value) -> options.setSoundCategoryVolume(soundSource, value.floatValue()));
 		}
 	}
 }

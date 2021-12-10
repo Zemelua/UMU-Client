@@ -16,6 +16,13 @@ public class ModConfig {
 	private final BooleanValue enableFallingStars;
 	private final IntValue themeColor;
 
+	private final IntValue blocksPlaceVolume;
+	private final IntValue blocksHitVolume;
+	private final IntValue blocksBreakVolume;
+	private final IntValue blocksStepVolume;
+	private final IntValue blocksFallVolume;
+	private final IntValue blocksAmbientVolume;
+
 	public ModConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("video");
 
@@ -23,6 +30,13 @@ public class ModConfig {
 		this.dynamicLightMode = ModConfig.defineEnum(builder, ModOptions.DYNAMIC_LIGHT_MODE);
 		this.enableFallingStars = ModConfig.define(builder, ModOptions.ENABLE_FALLING_STARS);
 		this.themeColor = ModConfig.defineInRange(builder, ModOptions.THEME_COLOR);
+
+		this.blocksPlaceVolume = ModConfig.defineInRange(builder, ModOptions.BLOCKS_PLACE_VOLUME);
+		this.blocksHitVolume = ModConfig.defineInRange(builder, ModOptions.BLOCKS_HIT_VOLUME);
+		this.blocksBreakVolume = ModConfig.defineInRange(builder, ModOptions.BLOCKS_BREAK_VOLUME);
+		this.blocksStepVolume = ModConfig.defineInRange(builder, ModOptions.BLOCKS_STEP_VOLUME);
+		this.blocksFallVolume = ModConfig.defineInRange(builder, ModOptions.BLOCKS_FALL_VOLUME);
+		this.blocksAmbientVolume = ModConfig.defineInRange(builder, ModOptions.BLOCKS_AMBIENT_VOLUME);
 	}
 
 	public BooleanValue getEnableDynamicLight() {
@@ -39,6 +53,30 @@ public class ModConfig {
 
 	public IntValue getThemeColor() {
 		return this.themeColor;
+	}
+
+	public IntValue getBlocksPlaceVolume() {
+		return this.blocksPlaceVolume;
+	}
+
+	public IntValue getBlocksHitVolume() {
+		return this.blocksHitVolume;
+	}
+
+	public IntValue getBlocksBreakVolume() {
+		return this.blocksBreakVolume;
+	}
+
+	public IntValue getBlocksStepVolume() {
+		return this.blocksStepVolume;
+	}
+
+	public IntValue getBlocksFallVolume() {
+		return this.blocksFallVolume;
+	}
+
+	public IntValue getBlocksAmbientVolume() {
+		return this.blocksAmbientVolume;
 	}
 
 	private static <T extends IOption<Boolean>> BooleanValue define(ForgeConfigSpec.Builder builder, T parent) {

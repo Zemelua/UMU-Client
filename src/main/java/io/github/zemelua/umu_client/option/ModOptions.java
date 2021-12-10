@@ -3,14 +3,12 @@ package io.github.zemelua.umu_client.option;
 import io.github.zemelua.umu_client.UMUClient;
 import io.github.zemelua.umu_client.config.ModConfig;
 import io.github.zemelua.umu_client.option.enums.DynamicLightMode;
+import io.github.zemelua.umu_client.option.vanilla.VanillaOptions;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.awt.*;
-import java.util.function.Function;
 
 public final class ModOptions {
 	public static final SwitchOption ENABLE_DYNAMIC_LIGHT;
@@ -18,19 +16,25 @@ public final class ModOptions {
 	public static final SwitchOption ENABLE_FALLING_STARS;
 	public static final ColorOption THEME_COLOR;
 
-	private static RangeOption percentOption(Function<ModConfig, ForgeConfigSpec.ConfigValue<Integer>> cache, String name) {
+	public static final RangeOption BLOCKS_PLACE_VOLUME;
+	public static final RangeOption BLOCKS_HIT_VOLUME;
+	public static final RangeOption BLOCKS_BREAK_VOLUME;
+	public static final RangeOption BLOCKS_STEP_VOLUME;
+	public static final RangeOption BLOCKS_FALL_VOLUME;
+	public static final RangeOption BLOCKS_AMBIENT_VOLUME;
+
+	private static RangeOption.Builder volumeOption() {
 		return new RangeOption.Builder()
 				.defaultValue(100)
 				.minValue(0)
 				.maxValue(100)
 				.interVal(1)
-				.name(name)
 				.valueFormatter((value, options, small) -> small
 						? new TextComponent(value.toString())
 						: value == 0
 						? CommonComponents.OPTION_OFF
-						: new TranslatableComponent("umu_client.screen.options.unit.percent_value", value))
-				.build(cache);
+						: ModOptions.percentUnit(value)
+				);
 	}
 
 	public static Component percentUnit(int value) {
@@ -77,5 +81,36 @@ public final class ModOptions {
 				.name("video.theme_color")
 				.description("video.theme_color")
 				.build(ModConfig::getThemeColor);
+
+		BLOCKS_PLACE_VOLUME = ModOptions.volumeOption()
+				.name("sound.block_place_volume")
+				.description("sound.block_place_volume")
+				.isEnable(() -> VanillaOptions.BLOCKS_VOLUME.getValue() > 0.0D)
+				.build(ModConfig::getBlocksPlaceVolume);
+		BLOCKS_HIT_VOLUME = ModOptions.volumeOption()
+				.name("sound.block_hit_volume")
+				.description("sound.block_hit_volume")
+				.isEnable(() -> VanillaOptions.BLOCKS_VOLUME.getValue() > 0.0D)
+				.build(ModConfig::getBlocksHitVolume);
+		BLOCKS_BREAK_VOLUME = ModOptions.volumeOption()
+				.name("sound.block_break_volume")
+				.description("sound.block_break_volume")
+				.isEnable(() -> VanillaOptions.BLOCKS_VOLUME.getValue() > 0.0D)
+				.build(ModConfig::getBlocksBreakVolume);
+		BLOCKS_STEP_VOLUME = ModOptions.volumeOption()
+				.name("sound.block_step_volume")
+				.description("sound.block_step_volume")
+				.isEnable(() -> VanillaOptions.BLOCKS_VOLUME.getValue() > 0.0D)
+				.build(ModConfig::getBlocksStepVolume);
+		BLOCKS_FALL_VOLUME = ModOptions.volumeOption()
+				.name("sound.block_fall_volume")
+				.description("sound.block_fall_volume")
+				.isEnable(() -> VanillaOptions.BLOCKS_VOLUME.getValue() > 0.0D)
+				.build(ModConfig::getBlocksFallVolume);
+		BLOCKS_AMBIENT_VOLUME = ModOptions.volumeOption()
+				.name("sound.block_ambient_volume")
+				.description("sound.block_ambient_volume")
+				.isEnable(() -> VanillaOptions.BLOCKS_VOLUME.getValue() > 0.0D)
+				.build(ModConfig::getBlocksAmbientVolume);
 	}
 }

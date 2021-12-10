@@ -17,6 +17,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.ChatVisiblity;
 
@@ -79,6 +80,32 @@ public final class VanillaOptions {
 	public static final SwitchVanillaOption DARK_MOJANG_STUDIOS_BACKGROUND_COLOR;
 	public static final SwitchVanillaOption HIDE_LIGHTNING_FLASH;
 	public static final SwitchVanillaOption AUTOSAVE_INDICATOR;
+
+	public static final RangeVanillaOption MASTER_VOLUME;
+	public static final RangeVanillaOption MUSIC_VOLUME;
+	public static final RangeVanillaOption RECORDS_VOLUME;
+	public static final RangeVanillaOption WEATHER_VOLUME;
+	public static final RangeVanillaOption BLOCKS_VOLUME;
+	public static final RangeVanillaOption HOSTILE_VOLUME;
+	public static final RangeVanillaOption NEUTRAL_VOLUME;
+	public static final RangeVanillaOption PLAYERS_VOLUME;
+	public static final RangeVanillaOption AMBIENT_VOLUME;
+	public static final RangeVanillaOption VOICE_VOLUME;
+
+	private static RangeVanillaOption.Builder volumeOption() {
+		return new RangeVanillaOption.Builder()
+				.defaultValue(1.0D)
+				.interVal(0.01D)
+				.valueFormatter((value, option, small) -> {
+					int percent = (int) (option.toPercent(value) * 100.0D);
+
+					return small
+							? new TextComponent(Integer.toString(percent))
+							: percent == 0
+							? CommonComponents.OPTION_OFF
+							: ModOptions.percentUnit(percent);
+				});
+	}
 
 	static {
 		BIOME_BLEND_RADIUS = new RangeVanillaOption.Builder()
@@ -661,5 +688,16 @@ public final class VanillaOptions {
 				.name("options.autosaveIndicator")
 				.description("video.hide_auto_save_indicator")
 				.build(options -> options.showAutosaveIndicator, (options, value) -> options.showAutosaveIndicator = value);
+
+		MASTER_VOLUME = VanillaOptions.volumeOption().build(SoundSource.MASTER);
+		MUSIC_VOLUME = VanillaOptions.volumeOption().build(SoundSource.MUSIC);
+		RECORDS_VOLUME = VanillaOptions.volumeOption().build(SoundSource.RECORDS);
+		WEATHER_VOLUME = VanillaOptions.volumeOption().build(SoundSource.WEATHER);
+		BLOCKS_VOLUME = VanillaOptions.volumeOption().build(SoundSource.BLOCKS);
+		HOSTILE_VOLUME = VanillaOptions.volumeOption().build(SoundSource.HOSTILE);
+		NEUTRAL_VOLUME = VanillaOptions.volumeOption().build(SoundSource.NEUTRAL);
+		PLAYERS_VOLUME = VanillaOptions.volumeOption().build(SoundSource.PLAYERS);
+		AMBIENT_VOLUME = VanillaOptions.volumeOption().build(SoundSource.AMBIENT);
+		VOICE_VOLUME = VanillaOptions.volumeOption().build(SoundSource.VOICE);
 	}
 }
