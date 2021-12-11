@@ -15,7 +15,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'io.github.zemelua'
-version = '1.0'
+version = '1.00'
 
 java {
     archivesBaseName = 'umu_client'
