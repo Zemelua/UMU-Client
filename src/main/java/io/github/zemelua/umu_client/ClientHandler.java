@@ -24,7 +24,7 @@ public class ClientHandler {
 	}
 
 	public void initialize() {
-		this.forgeBus.addListener(DYNAMIC_LIGHT_RENDERER::onClientTick);
+		this.forgeBus.addListener(DYNAMIC_LIGHT_RENDERER::onRenderTick);
 		this.forgeBus.addListener(VIEW_TILT_RENDERER::onCameraSetup);
 		this.forgeBus.addListener(FALLING_STAR_RENDERER::onClientTick);
 		this.forgeBus.addListener(SCREEN_MANAGER::onScreenOpen);
