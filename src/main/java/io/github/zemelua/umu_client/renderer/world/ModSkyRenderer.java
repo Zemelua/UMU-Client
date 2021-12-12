@@ -25,8 +25,7 @@ public class ModSkyRenderer {
 	private final List<FallingStar> fallingStars;
 
 	private Random random;
-	@Nullable
-	private MeteorShower shower;
+	@Nullable private MeteorShower shower;
 
 	public ModSkyRenderer(Minecraft minecraft) {
 		this.minecraft = minecraft;
@@ -55,6 +54,39 @@ public class ModSkyRenderer {
 
 			if (this.shower != null) {
 				this.shower.tick(dayTime);
+			}
+		}
+	}
+
+	public void drawStars(BufferBuilder builder) {
+		Random random = new Random(10842L);
+		builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+
+		for (int i = 0; i < 1500; ++i) {
+			float x = random.nextFloat() * 2.0F - 1.0F;
+			float y = random.nextFloat() * 2.0F - 1.0F;
+			float z = random.nextFloat() * 2.0F - 1.0F;
+			float size = 0.15F + random.nextFloat() * 0.1F;
+			float d = x * x + y * y + z * z;
+			if (d < 1.0F && d > 0.01F) {
+				d = (float) (1.0D / Math.sqrt(d));
+				x *= d;
+				y *= d;
+				z *= d;
+				double radian = random.nextDouble() * Math.PI * 2.0D;
+
+				float[] color;
+				switch (random.nextInt(9)) {
+					case 0 -> color = new float[]{1.00F, 0.86F, 0.80F};
+					case 1 -> color = new float[]{1.00F, 1.00F, 0.86F};
+					case 2 -> color = new float[]{0.88F, 0.97F, 1.00F};
+					default -> color = new float[]{1.00F, 1.00F, 1.00F};
+				}
+
+				Vector3f[] vertexes = ModSkyRenderer.calculateStarPos(x, y, z, size, radian);
+				for (Vector3f vertex : vertexes) {
+					builder.vertex(vertex.x(), vertex.y(), vertex.z()).color(color[0], color[1], color[2], 1.0F).endVertex();
+				}
 			}
 		}
 	}
@@ -107,6 +139,36 @@ public class ModSkyRenderer {
 		RenderSystem.disableTexture();
 	}
 
+	private static Vector3f[] calculateStarPos(float x, float y, float z, float size, double radian) {
+		float posX = x * 100.0F;
+		float posY = y * 100.0F;
+		float posZ = z * 100.0F;
+		double d8 = Math.atan2(x, z);
+		double d9 = Math.sin(d8);
+		double d10 = Math.cos(d8);
+		double d11 = Math.atan2(Math.sqrt(x * x + z * z), y);
+		double d12 = Math.sin(d11);
+		double d13 = Math.cos(d11);
+		double d15 = Math.sin(radian);
+		double d16 = Math.cos(radian);
+
+		Vector3f[] vertexes = new Vector3f[4];
+		for (int i = 0; i < 4; ++i) {
+			double d18 = (double) ((i & 2) - 1) * size;
+			double d19 = (double) ((i + 1 & 2) - 1) * size;
+			double d21 = d18 * d16 - d19 * d15;
+			double d22 = d19 * d16 + d18 * d15;
+			double d24 = 0.0D * d12 - d21 * d13;
+			float offsetX = (float) (d24 * d9 - d22 * d10);
+			float offsetY = (float) (d21 * d12 + 0.0D * d13);
+			float offsetZ = (float) (d22 * d9 + d24 * d10);
+
+			vertexes[i] = new Vector3f(posX + offsetX, posY + offsetY, posZ + offsetZ);
+		}
+
+		return vertexes;
+	}
+
 	private static class FallingStar {
 		private final float drawX;
 		private final float drawY;
@@ -119,7 +181,7 @@ public class ModSkyRenderer {
 			this.drawX = drawX;
 			this.drawY = drawY;
 			this.drawZ = drawZ;
-			this.size = 5.1F;
+			this.size = 4.3F;
 		}
 
 		private boolean draw(Matrix4f matrix, BufferBuilder builder, float partialTicks) {
@@ -133,29 +195,8 @@ public class ModSkyRenderer {
 			float endU = (float) (phaseU + 1) / 4.0F;
 			float endV = (float) (phaseV + 1) / 3.0F;
 
-			float practicalX = this.drawX * 100.0F;
-			float practicalY = this.drawY * 100.0F;
-			float practicalZ = this.drawZ * 100.0F;
-			double atan0 = Math.atan2(this.drawX, this.drawZ);
-			double sin0 = Math.sin(atan0);
-			double cos0 = Math.cos(atan0);
-			double atan1 = Math.atan2(Math.sqrt(this.drawX * this.drawX + this.drawZ * this.drawZ), this.drawY);
-			double sin1 = Math.sin(atan1);
-			double cos1 = Math.cos(atan1);
-			double radian = 2D / 8D * Math.PI * 2.0D;
-			double sin2 = Math.sin(radian);
-			double cos2 = Math.cos(radian);
-
-			for (int i = 0; i < 4; ++i) {
-				double d0 = (double) ((i & 2) - 1) * this.size;
-				double d1 = (double) ((i + 1 & 2) - 1) * this.size;
-				double d2 = d0 * cos2 - d1 * sin2;
-				double d3 = d1 * cos2 + d0 * sin2;
-				double d4 = 0.0D * sin1 - d2 * cos1;
-				float f0 = (float) (d4 * sin0 - d3 * cos0);
-				float f1 = (float) (d2 * sin1 + 0.0D * cos1);
-				float f2 = (float) (d3 * sin0 + d4 * cos0);
-
+			Vector3f[] vertexes = ModSkyRenderer.calculateStarPos(this.drawX, this.drawY, this.drawZ, this.size, Math.toRadians(90));
+			for (int i = 0; i < 4; i++) {
 				Vec2 uv = switch (i) {
 					case 0 -> new Vec2(endU, endV);
 					case 1 -> new Vec2(startU, endV);
@@ -165,8 +206,11 @@ public class ModSkyRenderer {
 					default -> throw new IllegalStateException("Unexpected value: " + i);
 				};
 
-				builder.vertex(matrix, practicalX + f0, practicalY + f1, practicalZ + f2).uv(uv.x, uv.y).endVertex();
+				Vector3f vertex = vertexes[i];
+				builder.vertex(matrix, vertex.x(), vertex.y(), vertex.z()).uv(uv.x, uv.y).endVertex();
 			}
+
+			UMUClient.LOGGER.info("re");
 
 			return Math.floor((int) (this.ticks * 0.5F) / 12.0D) > 0;
 		}
