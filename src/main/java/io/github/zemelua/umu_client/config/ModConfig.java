@@ -13,7 +13,7 @@ import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 public class ModConfig {
 	private final BooleanValue enableDynamicLight;
 	private final EnumValue<DynamicLightMode> dynamicLightMode;
-	private final BooleanValue enableFallingStars;
+	private final BooleanValue enableDramaticSky;
 	private final IntValue themeColor;
 
 	private final IntValue blocksPlaceVolume;
@@ -25,18 +25,20 @@ public class ModConfig {
 
 	public ModConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("video");
-
 		this.enableDynamicLight = ModConfig.define(builder, ModOptions.ENABLE_DYNAMIC_LIGHT);
 		this.dynamicLightMode = ModConfig.defineEnum(builder, ModOptions.DYNAMIC_LIGHT_MODE);
-		this.enableFallingStars = ModConfig.define(builder, ModOptions.ENABLE_FALLING_STARS);
+		this.enableDramaticSky = ModConfig.define(builder, ModOptions.ENABLE_DRAMATIC_SKY);
 		this.themeColor = ModConfig.defineInRange(builder, ModOptions.THEME_COLOR);
+		builder.pop();
 
+		builder.push("sound");
 		this.blocksPlaceVolume = ModConfig.defineInRange(builder, ModOptions.BLOCKS_PLACE_VOLUME);
 		this.blocksHitVolume = ModConfig.defineInRange(builder, ModOptions.BLOCKS_HIT_VOLUME);
 		this.blocksBreakVolume = ModConfig.defineInRange(builder, ModOptions.BLOCKS_BREAK_VOLUME);
 		this.blocksStepVolume = ModConfig.defineInRange(builder, ModOptions.BLOCKS_STEP_VOLUME);
 		this.blocksFallVolume = ModConfig.defineInRange(builder, ModOptions.BLOCKS_FALL_VOLUME);
 		this.blocksAmbientVolume = ModConfig.defineInRange(builder, ModOptions.BLOCKS_AMBIENT_VOLUME);
+		builder.pop();
 	}
 
 	public BooleanValue getEnableDynamicLight() {
@@ -47,8 +49,8 @@ public class ModConfig {
 		return this.dynamicLightMode;
 	}
 
-	public BooleanValue getEnableFallingStars() {
-		return this.enableFallingStars;
+	public BooleanValue getEnableDramaticSky() {
+		return this.enableDramaticSky;
 	}
 
 	public IntValue getThemeColor() {

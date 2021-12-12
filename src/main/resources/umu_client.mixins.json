@@ -10,8 +10,7 @@
 	],
 	"client": [
 		"AbstractSoundInstanceMixin",
-		"LevelRendererMixin",
-		"MixinLevelRenderer"
+		"LevelRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

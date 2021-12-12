@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class ModSkyRenderer {
+public class DramaticSkyRenderer {
 	private static final ResourceLocation FALLING_STAR_LOCATION = UMUClient.resource("textures/environment/falling_star.png");
 
 	private final Minecraft minecraft;
@@ -27,7 +27,7 @@ public class ModSkyRenderer {
 	private Random random;
 	@Nullable private MeteorShower shower;
 
-	public ModSkyRenderer(Minecraft minecraft) {
+	public DramaticSkyRenderer(Minecraft minecraft) {
 		this.minecraft = minecraft;
 		this.fallingStars = new ArrayList<>();
 	}
@@ -58,7 +58,7 @@ public class ModSkyRenderer {
 		}
 	}
 
-	public void drawStars(BufferBuilder builder) {
+	public static void drawStars(BufferBuilder builder) {
 		Random random = new Random(10842L);
 		builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
@@ -83,7 +83,7 @@ public class ModSkyRenderer {
 					default -> color = new float[]{1.00F, 1.00F, 1.00F};
 				}
 
-				Vector3f[] vertexes = ModSkyRenderer.calculateStarPos(x, y, z, size, radian);
+				Vector3f[] vertexes = DramaticSkyRenderer.calculateStarPos(x, y, z, size, radian);
 				for (Vector3f vertex : vertexes) {
 					builder.vertex(vertex.x(), vertex.y(), vertex.z()).color(color[0], color[1], color[2], 1.0F).endVertex();
 				}
@@ -195,7 +195,7 @@ public class ModSkyRenderer {
 			float endU = (float) (phaseU + 1) / 4.0F;
 			float endV = (float) (phaseV + 1) / 3.0F;
 
-			Vector3f[] vertexes = ModSkyRenderer.calculateStarPos(this.drawX, this.drawY, this.drawZ, this.size, Math.toRadians(90));
+			Vector3f[] vertexes = DramaticSkyRenderer.calculateStarPos(this.drawX, this.drawY, this.drawZ, this.size, Math.toRadians(90));
 			for (int i = 0; i < 4; i++) {
 				Vec2 uv = switch (i) {
 					case 0 -> new Vec2(endU, endV);
@@ -209,8 +209,6 @@ public class ModSkyRenderer {
 				Vector3f vertex = vertexes[i];
 				builder.vertex(matrix, vertex.x(), vertex.y(), vertex.z()).uv(uv.x, uv.y).endVertex();
 			}
-
-			UMUClient.LOGGER.info("re");
 
 			return Math.floor((int) (this.ticks * 0.5F) / 12.0D) > 0;
 		}
@@ -228,7 +226,7 @@ public class ModSkyRenderer {
 		private void tick(long dayTime) {
 			if (dayTime >= startTime && dayTime <= finishTime) {
 				for (int i = 0; i < 17; i++) {
-					ModSkyRenderer.this.createStar();
+					DramaticSkyRenderer.this.createStar();
 				}
 			}
 		}

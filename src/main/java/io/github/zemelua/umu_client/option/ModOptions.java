@@ -13,7 +13,7 @@ import java.awt.*;
 public final class ModOptions {
 	public static final SwitchOption ENABLE_DYNAMIC_LIGHT;
 	public static final EnumerationOption<DynamicLightMode> DYNAMIC_LIGHT_MODE;
-	public static final SwitchOption ENABLE_FALLING_STARS;
+	public static final SwitchOption ENABLE_DRAMATIC_SKY;
 	public static final ColorOption THEME_COLOR;
 
 	public static final RangeOption BLOCKS_PLACE_VOLUME;
@@ -70,11 +70,11 @@ public final class ModOptions {
 				.description("video.dynamic_light_mode")
 				.isEnable(ENABLE_DYNAMIC_LIGHT::getValue)
 				.build(ModConfig::getDynamicLightMode);
-		ENABLE_FALLING_STARS = new SwitchOption.Builder()
+		ENABLE_DRAMATIC_SKY = new SwitchOption.Builder()
 				.defaultValue(true)
-				.name("video.enable_falling_stars")
-				.description("video.enable_falling_stars")
-				.build(ModConfig::getEnableFallingStars);
+				.name("video.enable_dramatic_sky")
+				.description("video.enable_dramatic_sky")
+				.build(ModConfig::getEnableDramaticSky);
 		THEME_COLOR = new ColorOption.Builder()
 				.defaultValue(118)
 				.colorGetter(value -> Color.HSBtoRGB((float) value / 255.0F, 0.35F, 0.89F))
