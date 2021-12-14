@@ -491,7 +491,7 @@ public final class VanillaOptions {
 					SoundManager soundManager = Minecraft.getInstance().getSoundManager();
 					soundManager.reload();
 					soundManager.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-				}, new TranslatableComponent("options.audioDevice"), UMUClient.component("option.video.audio_device.description"),
+				}, new TranslatableComponent("options.audioDevice"), UMUClient.component("option.sound.audio_device.description"),
 				value -> {
 					if (value.equals("")) {
 						return new TranslatableComponent("options.audioDevice.default");
@@ -512,7 +512,7 @@ public final class VanillaOptions {
 				.defaultValue(HumanoidArm.RIGHT)
 				.values(HumanoidArm.values())
 				.name("options.mainHand")
-				.description("skin.mainHand")
+				.description("skin.main_hand")
 				.valueFormatter(HumanoidArm::getName)
 				.build(options -> options.mainHand, (options, value) -> {
 					options.mainHand = value;

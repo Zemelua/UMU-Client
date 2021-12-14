@@ -3,14 +3,18 @@ package io.github.zemelua.umu_client.gui.screen.option;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.zemelua.umu_client.UMUClient;
+import io.github.zemelua.umu_client.gui.screen.widget.BaseWidget;
 import io.github.zemelua.umu_client.gui.screen.widget.OptionWidget;
 import io.github.zemelua.umu_client.gui.screen.widget.SelectableButtonWidget;
 import io.github.zemelua.umu_client.gui.screen.widget.SimpleButtonWidget;
 import io.github.zemelua.umu_client.option.IOption;
 import io.github.zemelua.umu_client.util.Rect2i;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.FormattedCharSequence;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -18,12 +22,17 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class ModOptionsSubScreen extends Screen {
-	@Nullable private final Screen root;
+	@Nullable
+	private final Screen root;
 	private final ImmutableList<OptionPages.Page> pages;
 
 	private final List<OptionWidget<?, ?>> optionWidgets = new ArrayList<>();
 
 	private int currentPage;
+	@Nullable
+	private SimpleButtonWidget undoOrResetButton;
+	@Nullable
+	private Component description;
 
 	protected ModOptionsSubScreen(@Nullable Screen root, ImmutableList<OptionPages.Page> pages) {
 		super(new TextComponent("UMU Client Options"));
@@ -98,9 +107,6 @@ public class ModOptionsSubScreen extends Screen {
 		}
 	}
 
-	@Nullable
-	private SimpleButtonWidget undoOrResetButton;
-
 	private void initUndoOrResetButton() {
 		if (this.undoOrResetButton != null) {
 			this.removeWidget(this.undoOrResetButton);
@@ -127,6 +133,28 @@ public class ModOptionsSubScreen extends Screen {
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		super.renderBackground(matrixStack);
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
+
+		this.getAllOptionWidgets()
+				.filter(BaseWidget::isHovered)
+				.findFirst()
+				.ifPresent(widget -> this.description = widget.getOption().getDescription());
+
+		if (this.description != null) {
+			int startX = this.width / 2 + 8;
+			int endX = this.width - 6;
+			List<FormattedCharSequence> descriptionList = this.font.split(this.description, endX - startX - 12);
+			int startY = 28;
+			int endY = startY + descriptionList.size() * this.font.lineHeight + descriptionList.size() * 2 + 11;
+
+			GuiComponent.fill(matrixStack, endX, endY, startX, startY, 0x90000000);
+
+			int i = startY + 6;
+			for (FormattedCharSequence descriptionRow : descriptionList) {
+				i += 1;
+				this.font.draw(matrixStack, descriptionRow, startX + 6, i, 0xFFFFFFFF);
+				i += this.font.lineHeight + 1;
+			}
+		}
 	}
 
 	@Override
@@ -137,6 +165,7 @@ public class ModOptionsSubScreen extends Screen {
 
 		return result;
 	}
+
 
 	private void setPage(int index) {
 		this.undo();

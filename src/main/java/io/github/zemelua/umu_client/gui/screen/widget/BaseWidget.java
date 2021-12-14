@@ -63,6 +63,10 @@ public class BaseWidget implements Widget, NarratableEntry, GuiEventListener {
 		this.drawLabel(matrixStack, mouseX, mouseY, partialTicks);
 	}
 
+	public boolean isHovered() {
+		return this.hovered;
+	}
+
 	protected void drawBackGround(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		int startX = this.rect.getX();
 		int startY = this.rect.getY();

@@ -43,12 +43,11 @@ public abstract class OptionWidget<T, O extends IOption<T>> extends BaseWidget {
 
 	private int getLabelColor() {
 		return 0xFFFFFFFF;
-
-//		return this.isEnabled()
-//				? (this.isChanged() ? ModOptions.THEME_COLOR.getColor() : 0xFFFFFFFF)
-//				: 0x90FFFFFF;
 	}
 
+	public IOption<T> getOption() {
+		return this.option;
+	}
 
 	public void load() {
 		this.modifiableValue = this.option.getValue();
